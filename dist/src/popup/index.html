@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Odoo Domain Builder</title>
+  <link rel="icon" href="../../icons/icon32.png">
+  <link rel="stylesheet" href="../styles/wizard.css">
+  <script type="module" src="./popup.js"></script>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="brand"><img src="../../icons/icon48.png" width="44" height="44" alt=""><div><h1>Odoo Domain Builder</h1><p>Build Odoo domains visually · Drag the window title bar to move</p></div></div>
+      <div class="header-actions"><button id="theme" class="icon-button" title="Change color theme" aria-label="Change color theme">◐</button><button id="close" class="icon-button" title="Close wizard" aria-label="Close wizard">×</button></div>
+    </header>
+    <nav class="steps" aria-label="Domain wizard steps"><button id="step-build" class="step" aria-current="step"><span>1</span> Build your domain</button><button id="step-review" class="step"><span>2</span> Review &amp; copy</button></nav>
+    <div class="wizard-content">
+    <div id="build-step">
+    <div class="workspace-label"><span>DOMAIN WORKSPACE</span><span class="local-badge"><i></i> Private workspace</span></div>
+    <section class="model-panel" aria-label="Odoo model selection">
+      <div class="model-panel-heading"><strong id="selected-model">Choose your Odoo model</strong><span id="connection-badge">Not connected</span><button id="change-model" class="secondary" aria-expanded="true" aria-controls="model-settings" hidden>Change model</button></div>
+      <div id="model-settings">
+      <p class="model-hint">Use your logged-in Odoo tab. Selecting a different model starts a new domain.</p>
+      <div class="model-controls"><label class="field"><span class="field-label">Search models by name or label</span><input id="model-input" list="model-options" placeholder="e.g. sale.order, res.partner, project.task" autocomplete="off" spellcheck="false" disabled></label><button id="load-model" class="primary" disabled>Load fields</button><button id="connect" class="secondary">Reconnect</button></div>
+      <datalist id="model-options"></datalist>
+      <p id="model-list-status" class="model-hint"></p><button id="more-models" class="text-button" hidden>Load more models</button>
+      <p id="model-status" role="status"></p><button id="manual" class="text-button">Use manual fields instead</button>
+      </div>
+    </section>
+    <section class="builder-section" aria-label="Visual domain builder">
+      <div id="builder"></div>
+    </section>
+    <details id="examples"><summary>Examples <span>Start with a common domain</span></summary><div id="example-list" class="examples-grid"></div></details>
+    <details id="guide"><summary>Syntax guide <span>Operators & value types</span></summary><div class="guide-content"><p>AND matches all conditions. OR matches any. NOT negates an entire group. Add groups to combine them.</p><div id="operator-list" class="operator-list"></div><p>Lists use JSON input: <code>["draft", "sent"]</code>, <code>[1, 2]</code> or <code>[true, false]</code>. Output uses Python syntax. False / unset emits <code>False</code>, the Odoo unset value.</p><p>Use dotted fields such as <code>partner_id.name</code>. Connect to load all fields exposed by your Odoo account, including custom fields. Use Browse fields to select related fields. Dates use YYYY-MM-DD; date/time values are entered in UTC. Relations use record IDs or JSON lists of IDs. Server-specific behavior and record access still depend on Odoo.</p></div></details>
+    </div>
+    <div id="review-step" hidden>
+      <p id="review-model" class="model-hint"></p>
+      <p class="intro">Your domain is ready. Review the expression, then copy it into Odoo.</p>
+    <section class="output-section" aria-labelledby="output-heading">
+      <div class="section-heading"><h2 id="output-heading">Generated domain</h2><span id="validity" class="validity">Valid syntax</span></div>
+      <div class="code-panel"><div class="code-label"><span>PYTHON · ODOO DOMAIN</span><button id="format" aria-pressed="false">Format</button></div><pre id="output" tabindex="0" aria-label="Generated Odoo domain"></pre></div>
+      <div id="errors" aria-live="polite"></div>
+      <div class="output-actions"><p id="summary"></p><button id="copy" class="primary">Copy Domain <span aria-hidden="true">↗</span></button></div>
+    </section>
+      <p class="review-note">The domain is generated on your device and is not sent to Odoo. Connected mode reads model and field metadata only; it does not read business records or execute this domain.</p>
+    </div>
+    </div>
+    <footer class="wizard-footer"><div><button id="clear" class="text-button">Clear all</button><span class="save-note">Saved on this device</span></div><div class="footer-actions"><button id="back" class="secondary" hidden>← Back</button><button id="next" class="primary">Review domain →</button><button id="done" class="secondary" hidden>Done</button></div></footer>
+    <div id="status" role="status" aria-live="polite"></div>
+  </main>
+  <dialog id="field-dialog" aria-labelledby="field-dialog-title"><div class="field-dialog-heading"><div><h2 id="field-dialog-title">Choose a field</h2><p id="field-path"></p></div><button id="field-close" class="icon-button" aria-label="Close field browser">×</button></div><div class="field-dialog-tools"><button id="field-parent" class="secondary">← Parent</button><label class="field"><span class="field-label">Search fields by label, name or type</span><input id="field-search" type="search" autocomplete="off"></label></div><p id="field-count"></p><div id="field-list"></div></dialog>
+  <datalist id="fields"><option value="state"></option><option value="active"></option><option value="name"></option><option value="partner_id"></option><option value="company_id"></option><option value="create_date"></option><option value="user_id"></option><option value="id"></option></datalist>
+</body>
+</html>

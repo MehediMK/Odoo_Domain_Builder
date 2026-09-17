@@ -1,0 +1,22 @@
+[
+  {
+    "file": "01-main-builder",
+    "caption": "Choose a Model. Build with Its Fields."
+  },
+  {
+    "file": "02-multiple-conditions",
+    "caption": "Combine Conditions with AND, OR and NOT"
+  },
+  {
+    "file": "03-operators",
+    "caption": "Search Fields and Explore Related Models"
+  },
+  {
+    "file": "04-examples",
+    "caption": "Use Custom Fields and Selection Values"
+  },
+  {
+    "file": "05-copy-workflow",
+    "caption": "Review and Copy Your Odoo Domain"
+  }
+]
