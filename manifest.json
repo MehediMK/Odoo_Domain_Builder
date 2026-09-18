@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Odoo Domain Builder",
-  "version": "1.1.0",
-  "description": "Choose Odoo models and fields to visually build, validate, and copy domain expressions.",
+  "version": "1.2.0",
+  "description": "Build Odoo domains with related fields, select records by name, and preview matching data.",
   "permissions": [
     "activeTab",
     "scripting"

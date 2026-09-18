@@ -14,30 +14,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Odoo Domain Builder — Visual Odoo Domain &amp; Filter Builder for Chrome</title>
 
-  <!-- Primary SEO metadata
-       Replace the SITE_URL placeholders below with the real deployment URL
-       (protocol-relative paths keep this file working when opened locally). -->
-  <meta name="description" content="Odoo Domain Builder is a free Chrome extension that lets you visually build, validate, and copy Odoo domain expressions. Browse Odoo models and fields — including custom models and custom fields — combine conditions with AND/OR/NOT, and copy clean Python domain syntax.">
+  <!-- Primary SEO metadata for the GitHub Pages documentation site. -->
+  <meta name="description" content="Build Odoo domains with child fields, select records by name, and preview matching data with selected columns. Free Chrome extension.">
   <meta name="keywords" content="Odoo domain builder, Odoo domain, Odoo filter builder, Odoo models, Odoo fields, visual domain builder, Odoo developer tools, Odoo domain syntax, Odoo custom fields, Odoo related fields, Chrome extension Odoo, Odoo domain expression">
   <meta name="author" content="Odoo Domain Builder">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://www.example.com/odoo-domain-builder/docs/">
+  <link rel="canonical" href="https://mehedimk.github.io/Odoo_Domain_Builder/">
 
   <!-- Open Graph (Facebook, LinkedIn, etc.) -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Odoo Domain Builder">
   <meta property="og:title" content="Odoo Domain Builder — Visual Odoo Domain &amp; Filter Builder for Chrome">
-  <meta property="og:description" content="Choose Odoo models and fields to visually build, validate, and copy domain expressions. Custom models, custom fields, related fields, AND/OR/NOT groups, and one-click copy.">
-  <meta property="og:url" content="https://www.example.com/odoo-domain-builder/docs/">
-  <meta property="og:image" content="https://www.example.com/odoo-domain-builder/docs/assets/screenshots/01-main-builder.png">
+  <meta property="og:description" content="Build Odoo domains with child fields, select records by name, and preview matching data with selected columns. Free Chrome extension.">
+  <meta property="og:url" content="https://mehedimk.github.io/Odoo_Domain_Builder/">
+  <meta property="og:image" content="https://mehedimk.github.io/Odoo_Domain_Builder/assets/screenshots/01-main-builder.png">
   <meta property="og:image:alt" content="Odoo Domain Builder extension wizard showing an Odoo model and its fields">
   <meta property="og:locale" content="en_US">
 
   <!-- Twitter / X Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Odoo Domain Builder — Visual Odoo Domain &amp; Filter Builder for Chrome">
-  <meta name="twitter:description" content="Build Odoo domains visually: browse models and fields, add conditions and logical groups, then copy clean Odoo domain syntax with one click.">
-  <meta name="twitter:image" content="https://www.example.com/odoo-domain-builder/docs/assets/screenshots/01-main-builder.png">
+  <meta name="twitter:description" content="Build Odoo domains with child fields, select records by name, and preview matching data with selected columns. Free Chrome extension.">
+  <meta name="twitter:image" content="https://mehedimk.github.io/Odoo_Domain_Builder/assets/screenshots/01-main-builder.png">
 
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon32.png">
   <link rel="icon" type="image/png" sizes="128x128" href="assets/icons/icon128.png">
@@ -49,18 +47,18 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Odoo Domain Builder",
-    "softwareVersion": "1.1.0",
+    "softwareVersion": "1.2.0",
     "operatingSystem": "Chrome 116 or newer",
     "applicationCategory": "DeveloperApplication",
     "description": "A visual Odoo domain builder for Chrome. Choose Odoo models and fields to build, validate, and copy domain expressions.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "featureList": "Visual Odoo domain builder, model and field browser, custom models and custom fields, related-field dotted paths, 17 domain operators, AND/OR/NOT groups, local draft recovery, light/dark themes, offline manual mode",
     "screenshot": [
-      "https://www.example.com/odoo-domain-builder/docs/assets/screenshots/01-main-builder.png",
-      "https://www.example.com/odoo-domain-builder/docs/assets/screenshots/02-multiple-conditions.png",
-      "https://www.example.com/odoo-domain-builder/docs/assets/screenshots/03-operators.png",
-      "https://www.example.com/odoo-domain-builder/docs/assets/screenshots/04-examples.png",
-      "https://www.example.com/odoo-domain-builder/docs/assets/screenshots/05-copy-workflow.png"
+      "https://mehedimk.github.io/Odoo_Domain_Builder/assets/screenshots/01-main-builder.png",
+      "https://mehedimk.github.io/Odoo_Domain_Builder/assets/screenshots/02-multiple-conditions.png",
+      "https://mehedimk.github.io/Odoo_Domain_Builder/assets/screenshots/03-operators.png",
+      "https://mehedimk.github.io/Odoo_Domain_Builder/assets/screenshots/04-examples.png",
+      "https://mehedimk.github.io/Odoo_Domain_Builder/assets/screenshots/05-copy-workflow.png"
     ]
   }
   </script>
@@ -87,7 +85,7 @@
       {
         "@type": "Question",
         "name": "Does it read or change my business records?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Load data reads matching business records on request, using your Odoo account’s access rights. Results are displayed in memory, 50 at a time. It never writes business records." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Select record reads IDs and names; Load data reads matching records and selected related values. Requests use your account’s access rights. Results stay in memory. The extension never writes business records." }
       },
       {
         "@type": "Question",
@@ -224,9 +222,9 @@
     </nav>
 
     <div class="hero wrap" id="top">
-      <span class="badge">Free extension · Manifest V3 · Chrome 116+</span>
+      <span class="badge">Version 1.2.0 · Free extension · Chrome 116+</span>
       <h1>Build Odoo domains visually, from your real models and fields</h1>
-      <p class="lead">Choose an Odoo model, browse its actual fields — including custom models, custom fields, and related fields — combine conditions with AND / OR / NOT, and copy clean, validated Odoo domain syntax with one click.</p>
+      <p class="lead">Build with real model and child fields, select products or other records by name, and copy your domain or preview matching data with the columns you choose.</p>
       <div class="hero-cta">
         <a class="cta cta-primary" href="https://chromewebstore.google.com/detail/homeljjcgdefldcneinofjnbdagdhbmg?utm_source=item-share-cb">Install Chrome Extension</a>
         <a class="cta cta-secondary" href="#security">Privacy &amp; permissions</a>
@@ -236,7 +234,7 @@
         <span class="badge">Read-only record previews</span>
         <span class="badge">Offline manual mode</span>
       </div>
-      <img class="hero-shot" src="assets/screenshots/01-main-builder.png" alt="Odoo Domain Builder wizard: the Choose a Model panel next to a visual condition builder showing loaded field metadata" width="1280" height="800">
+      <img class="hero-shot" src="assets/screenshots/01-main-builder.png" alt="Odoo Domain Builder 1.2.0 building purchase-order filters with child fields" width="1280" height="800">
     </div>
   </header>
 
@@ -268,17 +266,20 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="features-heading">Key features</h2>
-          <p class="lead">Everything is validated as you type and backed by real Odoo field metadata when connected.</p>
+          <p class="lead">Local syntax and value checks use your model metadata. Record searches and previews follow your Odoo access rights.</p>
         </div>
         <div class="feature-grid">
           <article class="feature"><strong>Model search</strong><p>Search models by label or technical name through <code>ir.model</code> — including custom models — with paginated results and live server search.</p></article>
           <article class="feature"><strong>Real field metadata</strong><p>Load every field <code>fields_get</code> exposes to your account, including custom and inherited fields. Non-searchable fields are clearly marked.</p></article>
-          <article class="feature"><strong>Related-field browser</strong><p>Drill into many2one, one2many, and many2many relations up to eight levels and build dotted paths like <code>partner_id.country_id.code</code>.</p></article>
-          <article class="feature"><strong>Type-aware inputs</strong><p>Selection dropdowns plus validated boolean, integer, float/monetary, date, and UTC datetime inputs. Related fields use record IDs or JSON lists.</p></article>
+          <article class="feature"><strong>Child-field navigation</strong><p>Drill into many2one, one2many, and many2many relations up to eight levels and build dotted paths like <code>partner_id.country_id.code</code>.</p></article>
+          <article class="feature"><strong>Type-aware inputs</strong><p>Selection dropdowns plus validated boolean, integer, float/monetary, date, and UTC datetime inputs. Related fields can select records by name and insert their IDs.</p></article>
           <article class="feature"><strong>17 domain operators</strong><p>Comparisons, membership (<code>in</code> / <code>not in</code>), text matching (<code>ilike</code>, <code>=like</code>, …), and hierarchy operators (<code>child_of</code>, <code>parent_of</code>).</p></article>
           <article class="feature"><strong>Logical groups &amp; validation</strong><p>Combine conditions with AND / OR / NOT, up to five nested group levels and 100 conditions, with inline error reporting.</p></article>
           <article class="feature"><strong>Review, format &amp; copy</strong><p>Preview the generated domain, switch between compact and formatted output, and copy it to your clipboard in one click.</p></article>
           <article class="feature"><strong>Local drafts &amp; themes</strong><p>Drafts, model context, and your light/dark theme preference are saved in local extension storage and restored on reopen.</p></article>
+          <article class="feature"><strong>Select records by name</strong><p>Search products or other related records and insert their IDs automatically. List values support multiple selections.</p></article>
+          <article class="feature"><strong>Load matching data</strong><p>Read matching records in 50-row pages, then use Load more. Records are never modified.</p></article>
+          <article class="feature"><strong>Choose your columns</strong><p>Select up to 12 columns, including child-model fields. Multiple related values appear together in each main-model row.</p></article>
           <article class="feature"><strong>Offline manual mode</strong><p>No Odoo connection? Build domains with manual fields, operators, and values with full syntax and logical-structure validation.</p></article>
         </div>
       </div>
@@ -288,28 +289,28 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="screenshots-heading">Screenshots</h2>
-          <p class="lead">Walk through the build → review → copy workflow. Screenshots show the actual extension using controlled demo metadata.</p>
+          <p class="lead">Version 1.2.0: child fields → product selection → chosen columns → matching data. Screenshots show the actual interface with fictional demo metadata and records.</p>
         </div>
         <div class="gallery">
           <figure>
-            <img src="assets/screenshots/01-main-builder.png" alt="Odoo Domain Builder main window: choose a model and build a domain with its loaded fields" loading="lazy" width="1280" height="800">
-            <figcaption>Choose a model. Build with its fields.</figcaption>
+            <img src="assets/screenshots/01-main-builder.png" alt="Build purchase-order domains with child fields." loading="lazy" width="1280" height="800">
+            <figcaption>Build purchase-order domains with child fields.</figcaption>
           </figure>
           <figure>
-            <img src="assets/screenshots/02-multiple-conditions.png" alt="Multiple Odoo domain conditions combined with AND and OR buttons in the builder" loading="lazy" width="1280" height="800">
-            <figcaption>Combine conditions with AND, OR and NOT.</figcaption>
+            <img src="assets/screenshots/02-multiple-conditions.png" alt="Explore order lines and related products." loading="lazy" width="1280" height="800">
+            <figcaption>Explore order lines and related products.</figcaption>
           </figure>
           <figure>
-            <img src="assets/screenshots/03-operators.png" alt="Field search dialog that explores related Odoo models with a dotted field path" loading="lazy" width="1280" height="800">
-            <figcaption>Search fields and explore related models.</figcaption>
+            <img src="assets/screenshots/03-operators.png" alt="Select products by name; use their IDs automatically." loading="lazy" width="1280" height="800">
+            <figcaption>Select products by name; use their IDs automatically.</figcaption>
           </figure>
           <figure>
-            <img src="assets/screenshots/04-examples.png" alt="Odoo Domain Builder examples grid with custom fields and selection values" loading="lazy" width="1280" height="800">
-            <figcaption>Use custom fields and selection values.</figcaption>
+            <img src="assets/screenshots/04-examples.png" alt="Choose result columns across related models." loading="lazy" width="1280" height="800">
+            <figcaption>Choose result columns across related models.</figcaption>
           </figure>
           <figure>
-            <img src="assets/screenshots/05-copy-workflow.png" alt="Review step showing the generated Odoo domain in the code panel with a Copy Domain button" loading="lazy" width="1280" height="800">
-            <figcaption>Review and copy your Odoo domain.</figcaption>
+            <img src="assets/screenshots/05-copy-workflow.png" alt="Copy your domain and load matching records." loading="lazy" width="1280" height="800">
+            <figcaption>Copy your domain and load matching records.</figcaption>
           </figure>
         </div>
         <div class="callout"><div><b>Tip:</b> Open the wizard by logging in to Odoo in a tab, then clicking the extension toolbar icon in that tab. Drag the title bar to move the window, and click the × or <b>Done</b> to close it.</div></div>
@@ -327,13 +328,20 @@
           <div class="step-item"><p><b>Install.</b> Open <a href="https://chromewebstore.google.com/detail/homeljjcgdefldcneinofjnbdagdhbmg?utm_source=item-share-cb">Odoo Domain Builder on the Chrome Web Store</a> and click <b>Add to Chrome</b>. Chrome 116 or newer is required.</p></div>
           <div class="step-item"><p><b>Log in and click.</b> Open your Odoo backend in a regular tab and log in normally. Click the extension toolbar icon <i>while that Odoo tab is active</i> to grant temporary access.</p></div>
           <div class="step-item"><p><b>Choose a model.</b> Search by label or technical name (for example <code>sale.order</code>, <code>res.partner</code>, <code>project.task</code>, or a custom model). Select a suggestion or type a technical name and click <b>Load fields</b>.</p></div>
-          <div class="step-item"><p><b>Build conditions.</b> Click <b>Browse fields</b>, search all fields returned by Odoo, or choose <b>Related fields →</b> to navigate a relation. Select a field, operator, and value.</p></div>
+          <div class="step-item"><p><b>Build conditions.</b> Click <b>Browse fields</b>, search all fields returned by Odoo, or click a relation to open its child fields. Use <b>Use record IDs</b> for the relation itself, then <b>Select record…</b> to search by name. Select an operator and value.</p></div>
           <div class="step-item"><p><b>Combine and review.</b> Add conditions or nested AND / OR / NOT groups, then choose <b>Review domain →</b> to validate everything and view the generated expression.</p></div>
           <div class="step-item"><p><b>Copy.</b> Click <b>Copy Domain</b> to place your domain on the clipboard and paste it into Odoo.</p></div>
         </div>
         <div class="callout"><div><b>Reconnect anytime:</b> clicking the toolbar icon reuses the existing wizard; clicking from a different Odoo tab switches its connection and refreshes metadata.</div></div>
       </div>
     </section>
+
+    <section id="child-fields" aria-labelledby="child-heading"><div class="wrap">
+      <h2 id="child-heading">Build with purchase-order child fields</h2>
+      <p>Choose <code>purchase.order</code>, open <b>Browse fields → Order Lines → Product → Name</b>, or select <b>Order Lines → Quantity</b>. To choose a specific product, use the Product relation itself and click <b>Select record…</b>.</p>
+      <div class="code-block"><code>[('order_line.product_id.name', 'ilike', 'Chair')]<br>[('order_line.product_qty', '&gt;', 10.0)]<br>[('order_line.product_id', '=', 42)]</code></div>
+      <p>The example ID is illustrative; pick the actual product from your server. Domains filter purchase orders. Separate one-to-many conditions can match different child records. Preview columns show accessible related records, not only matching child lines.</p>
+    </div></section>
 
     <section id="operators" aria-labelledby="operators-heading">
       <div class="wrap">
@@ -386,8 +394,9 @@
             <ul class="tight">
               <li>Up to 100 conditions and five nested logical group levels.</li>
               <li>Up to eight related-field levels in dotted paths.</li>
+              <li>Up to 12 preview columns, 50 main-model rows per page; binary columns excluded.</li>
               <li>Datetimes are entered in <b>UTC</b>.</li>
-              <li>Related fields use record IDs or JSON lists of IDs (record names are not fetched).</li>
+              <li>Relational values can be selected by name; the domain uses IDs or lists of IDs.</li>
               <li>Domains are sent to Odoo only for requested record previews; arbitrary Python / context expressions and server operators are out of scope.</li>
             </ul>
           </div>
@@ -399,30 +408,31 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="security-heading">Security, permissions, and privacy</h2>
-          <p class="lead">Minimal permissions, no credential handling, and zero remote data collection.</p>
+          <p class="lead">Temporary tab access, no credential entry, and read-only requests to your selected Odoo server.</p>
         </div>
         <div class="two-col">
           <div>
             <h3>Permissions requested</h3>
             <ul class="tight">
-              <li><b>activeTab</b> — temporary access to the tab where you click the extension icon, used to read metadata from your selected Odoo session.</li>
-              <li><b>scripting</b> — runs a packaged, self-contained function in that tab's isolated world for session checks and metadata loading.</li>
+              <li><b>activeTab</b> — temporary access to the tab where you click the extension icon, used for metadata, record searches and requested previews in your selected Odoo session.</li>
+              <li><b>scripting</b> — runs a packaged, self-contained function in that tab's isolated world for session checks, metadata, record searches and previews.</li>
             </ul>
             <p><b>No</b> host permissions, cookies, tabs, browsing-history, webRequest, or storage permissions are requested. There is no remote code and no auto-injected content script.</p>
-            <p>The injected code verifies the session, lists models through <code>ir.model</code>, reads field definitions via <code>fields_get</code>, and loads matching records through <code>search_read</code> when you click Load data. It does not scrape the page or write business records.</p>
+            <p>The injected code verifies the session, lists models through <code>ir.model</code>, reads field definitions via <code>fields_get</code>, and uses <code>search_read</code> for record-name searches and requested data previews. It does not scrape the page or write business records.</p>
           </div>
           <div>
             <h3>Privacy</h3>
             <ul class="tight">
               <li><b>No credentials:</b> you are never asked for a password or API key; the existing session is reused.</li>
-              <li><b>Selected server only:</b> metadata and record-preview requests go only to your selected Odoo origin and follow its normal access controls.</li>
+              <li><b>Selected server only:</b> metadata, record-search and preview requests go only to your selected Odoo origin and follow its normal access controls.</li>
               <li><b>Record previews:</b> Load data sends the domain and values only to your selected Odoo server. Loaded records remain in memory and are never changed.</li>
+              <li><b>Record selection:</b> search text goes to your Odoo server; selected IDs become draft values. Result names stay in memory.</li>
               <li><b>Local storage:</b> drafts and preferences live in extension Web Storage and are deleted on uninstall.</li>
               <li><b>The extension has no analytics, advertising, or telemetry.</b></li>
             </ul>
             <p>This documentation website uses Google Analytics 4 to measure website usage.</p>
             <p>Odoo access rights are respected — visible models and fields match what your account can see; non-searchable fields and restricted accounts are handled gracefully.</p>
-            <p>See the project's <code>PRIVACY.md</code> and <code>PERMISSIONS.md</code> for the full policies.</p>
+            <p>Read the <a href="privacy.html">privacy policy</a> for data use, storage and website analytics details.</p>
           </div>
         </div>
       </div>
@@ -433,6 +443,14 @@
         <div class="section-head">
           <h2 id="changelog-heading">Release notes</h2>
         </div>
+        <h3>Version 1.2.0 — September 18, 2026</h3>
+        <ul class="tight">
+          <li>Load data with 50-row pages and Load more.</li>
+          <li>Choose up to 12 result columns, including related-model fields.</li>
+          <li>Navigate child fields directly with breadcrumbs and Child fields shortcuts.</li>
+          <li>Select related records by name and automatically insert one ID or a list of IDs.</li>
+          <li>Updated privacy disclosures, screenshots and release documentation. No additional permissions.</li>
+        </ul>
         <h3>Version 1.1.0 — September 17, 2026</h3>
         <ul class="tight">
           <li>Automatic model and field loading from your logged-in Odoo session via <code>activeTab</code> and <code>scripting</code>.</li>
@@ -458,7 +476,7 @@
         <details class="faq-item"><summary>What is an Odoo domain?</summary><p>An Odoo domain is a list of conditions used to filter records, written as tuples such as <code>[('state', '=', 'draft')]</code>. Domains are the value of the <code>domain</code> attribute on actions, sidebars, computed fields, and server code.</p></details>
         <details class="faq-item"><summary>Does the extension send my generated domains to Odoo?</summary><p>Only when you click Load data or Load more. The domain and its values are sent to your selected Odoo server to read matching records using your account’s access rights.</p></details>
         <details class="faq-item"><summary>Do I need to enter my Odoo password or an API key?</summary><p>No. Clicking the toolbar icon in a logged-in Odoo tab reuses that tab's existing session. The extension does not read cookie values or store credentials.</p></details>
-        <details class="faq-item"><summary>Does it read or change my business records?</summary><p>Load data reads matching business records on request, using your Odoo account’s access rights. Results are displayed in memory, 50 at a time. It never writes business records.</p></details>
+        <details class="faq-item"><summary>Does it read or change my business records?</summary><p>Select record reads IDs and names; Load data reads matching records and selected related values. Requests use your account’s access rights. Results stay in memory. The extension never writes business records.</p></details>
         <details class="faq-item"><summary>Can I use it without a connection to Odoo?</summary><p>Yes. Manual-field mode builds domains offline without model validation or any Odoo connection, while still validating syntax, values, and logical structure.</p></details>
         <details class="faq-item"><summary>Does it support custom models and custom fields?</summary><p>Yes. Connected mode loads every field your Odoo account can see — including custom and inherited fields — and lets you browse relations up to eight levels. Accounts that cannot list <code>ir.model</code> can still type a known technical model name.</p></details>
         <details class="faq-item"><summary>Which browsers and versions are supported?</summary><p>It is a Manifest V3 Chrome extension and requires Chrome 116 or newer.</p></details>
@@ -472,10 +490,10 @@
   <footer class="site-footer">
     <div class="wrap">
       <div>
-        <strong>Odoo Domain Builder</strong> · Version 1.1.0 · Independently developed.
+        <strong>Odoo Domain Builder</strong> · Version 1.2.0 · Independently developed.
       </div>
       <div>
-        Built with no runtime dependencies · Stores data locally · No analytics or telemetry.
+        Extension: local drafts, no analytics · Docs website: Google Analytics 4 · <a href="privacy.html">Privacy</a>
       </div>
     </div>
   </footer>

@@ -1,92 +1,17 @@
-# SEO Strategy & Hosting Guide — Odoo Domain Builder Docs
+# Docs publishing notes — 1.2.0
 
-This file documents the SEO decisions baked into `index.html` and tells you exactly what to change
-before you host it. `index.html` is the page search engines should index; `docs.md` is the
-maintainable source.
+The static site is `index.html`; the companion Markdown guide is `docs.md`. Screenshots and promo graphics are mirrored from `store-assets/` and depict the actual interface with fictional demo data.
 
----
+## Hosting setup
 
-## 1. Keyword strategy
+The public documentation URL is [https://mehedimk.github.io/Odoo_Domain_Builder/](https://mehedimk.github.io/Odoo_Domain_Builder/). Canonical, Open Graph, Twitter, structured-data images, sitemap.xml and robots.txt use this URL. Deploy the contents of `docs/` at this GitHub Pages root, including privacy.html and assets. Use [https://mehedimk.github.io/Odoo_Domain_Builder/privacy.html](https://mehedimk.github.io/Odoo_Domain_Builder/privacy.html) as the Chrome Web Store privacy policy URL after deploying the page.
 
-| Intent level | Keywords / phrases |
-| --- | --- |
-| Primary head term | `Odoo domain builder` |
-| High-intent secondary | `build Odoo domain`, `Odoo domain syntax`, `Odoo filter builder`, `Odoo domain expression` |
-| Feature-driven | `Odoo models`, `Odoo fields`, `custom fields`, `related fields`, `dotted field path`, `AND OR NOT groups`, `domain operators` |
-| Context | `Odoo developer tools`, `Odoo filters`, `Chrome extension for Odoo`, `Odoo implementation` |
+The install buttons link to listing `homeljjcgdefldcneinofjnbdagdhbmg`. The documentation landing page uses GA4 `G-1Q7M8BLE4C`; the extension and standalone privacy page do not load analytics.
 
-Placement in `index.html`:
+## Content and assets
 
-- **Title tag** (primary keyword first, under ~60 chars): “Odoo Domain Builder — Visual Odoo Domain
-  &amp; Filter Builder for Chrome”.
-- **Meta description** (~150–160 chars): includes “visually build, validate, and copy Odoo domain
-  expressions” and the feature keywords.
-- **Meta keywords** (minor ranking signal; kept for completeness — do not stuff).
-- **H1** (exactly one): contains “Build Odoo domains visually”.
-- **H2 sections**, **image alt text**, and **JSON-LD** each reuse the natural phrase “Odoo domain”.
+The page includes title/description metadata, social cards, SoftwareApplication and FAQPage structured data, accessible section headings, and descriptive screenshot alt text. Structured data does not guarantee a search feature or rich result.
 
-## 2. On-page tactics used
+Five screenshots are 1280×800 PNGs. Promo graphics are 440×280 and 1400×560. Keep the demo-data disclosure with the gallery. Keep version, screenshots, visible FAQ answers and structured FAQ answers synchronized when editing.
 
-- One `<h1>`; sectioned `<section>` elements with labelled `<h2>` headings and `aria-labelledby`.
-- Descriptive, keyword-bearing `alt` text on every screenshot (important for image SEO and
-  accessibility).
-- Semantic `<nav>`, `<article>`, `<figure>`, `<table>`, `<details>` markup for rich snippets.
-- Structured data via JSON-LD:
-  - `SoftwareApplication` (name, version, category `DeveloperApplication`, free `Offer`, featured
-    screenshots).
-  - `FAQPage` (10 questions) — eligible for FAQ rich results and answer boxes.
-- Open Graph (`og:*`) and Twitter Card (`summary_large_image`) for link-share previews.
-- `canonical` URL so duplicate copies never compete for ranking.
-- Lazy-loaded screenshots (`loading="lazy"` + explicit `width`/`height`) for performance (Core Web
-  Vitals: LCP/CLS).
-
-## 3. Before you publish — required edits
-
-Everything below lives at the top of `index.html` and in `robots.txt`/`sitemap.xml`.
-
-1. **Replace the placeholder domain** `https://www.example.com/odoo-domain-builder/docs/` in:
-   - `<link rel="canonical">`
-   - `og:url`
-   - `og:image`, `og:image:alt` (unchanged text)
-   - `twitter:image`
-   - Both JSON-LD blocks (all `screenshot` URLs)
-2. **Publish the images** — the page references relative paths
-   (`assets/screenshots/*.png`, `assets/icons/*.png`). Upload the whole `docs/` folder verbatim.
-3. **Verify the Chrome Web Store link** in the primary install CTA and installation instructions.
-   Both now link to the published extension listing.
-4. Update the **`sitemap.xml`** last-modified date and any extra pages you add.
-
-## 4. Build-time SEO (crawlers)
-
-The project is a local Chrome extension, so there is no hosted product site by default. If you
-want organic traffic for “Odoo domain builder”-type searches, host `docs/` on GitHub Pages or any
-static host and serve:
-
-- `robots.txt` → allow all crawlers, point to `sitemap.xml`.
-- `sitemap.xml` → the docs page (canonical URL).
-- Keep the page under HTTPS so the canonical/OG image URLs resolve.
-
-### Performance notes (Core Web Vitals)
-
-- Screenshots are 1280×800 PNGs (~100–120 KB each) — fine for a docs page; JPEG/WebP could trim
-  more if bytes are a concern.
-- No external fonts are loaded. The page loads the Google Analytics 4 tag asynchronously
-  with measurement ID `G-1Q7M8BLE4C` to measure documentation website usage.
-
-## 5. Feature-work accountability (facts to keep accurate)
-
-- Version, permissions and privacy statements must match `manifest.json`, `PRIVACY.md`,
-  `PERMISSIONS.md`, `STORE_LISTING.md`, and `PUBLISHING_CHECKLIST.md`.
-- Do not claim: server-side validation, arbitrary Python execution, business-record modification,
-  universal Odoo-version compatibility, or affiliate/endorsement status with Odoo S.A.
-- Screenshots show controlled demo metadata; keep the disclaimers in the Screenshots section if
-  that remains true.
-
-## 6. Open Graph / share preview checklist
-
-Before sharing on LinkedIn/X/Slack, verify:
-
-1. `og:title`/`og:description` render (use any OG debugger).
-2. `og:image` is reachable (absolute URL) and at least 600×315 `ps`; ours is 1280×800.
-3. `twitter:card` is `summary_large_image`.
-4. Canonical URL is stable — do not add query strings or `#` fragments to shared links.
+Do not claim universal Odoo compatibility, server-side validation of every expression, arbitrary Python execution, record modification or official Odoo endorsement. Draft generation is local; record searches and requested previews communicate with the selected Odoo server.

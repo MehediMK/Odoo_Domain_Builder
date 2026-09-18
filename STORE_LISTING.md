@@ -1,4 +1,9 @@
-# Chrome Web Store listing — 1.1.0
+# Chrome Web Store listing — 1.2.0
+
+## Website and privacy URLs
+
+- Website: https://mehedimk.github.io/Odoo_Domain_Builder/
+- Privacy policy: https://mehedimk.github.io/Odoo_Domain_Builder/privacy.html (deploy the updated docs before submitting).
 
 ## Product name
 
@@ -6,64 +11,58 @@ Odoo Domain Builder
 
 ## Short description
 
-Choose Odoo models and fields to visually build, validate, and copy domain expressions.
+Build Odoo domains with related fields, select records by name, and preview matching data.
 
 ## Full description
 
-Odoo Domain Builder
+Build Odoo domain filters visually using your actual models and fields. Explore child fields, select products or other related records by name, and preview the records that match your domain.
 
-Choose a model from your logged-in Odoo session, browse its fields, and build a domain expression visually. Use actual field definitions instead of guessing technical names or writing every tuple manually.
+WHAT’S NEW IN 1.2.0
+
+• Load data shows matching records, with 50-row pages and Load more.
+• Choose up to 12 result columns, including related-model fields.
+• Open child fields directly and navigate back using breadcrumbs.
+• Search related records by name; the selected ID is inserted automatically.
+• Select multiple related records for list values such as in / not in.
 
 FEATURES
 
-• Search models by label or technical name, including custom models
-• Load the fields exposed by your Odoo account, including custom fields
-• Browse related-model fields and build dotted field paths
-• Selection dropdowns and type-aware boolean, number, date and UTC datetime inputs
-• 17 common Odoo domain operators
-• Multiple conditions, nested AND / OR groups and NOT
-• Input, field and logical-structure validation
-• Compact or multiline output and one-click copy
-• Load data to preview matching records, with 50-row pages and Load more
-• A movable wizard with Build and Review & Copy steps
-• Local draft recovery and light/dark themes
-• Manual-field mode for offline domain construction
+• Search models, including custom models, and load fields exposed to your Odoo account.
+• Browse many2one, one2many and many2many paths up to eight levels.
+• Selection dropdowns and typed boolean, number, date and UTC datetime inputs.
+• 17 operators, AND / OR / NOT groups, inline validation and formatted Python output.
+• Copy Domain, local draft recovery, light/dark themes and an offline manual mode.
 
-HOW TO USE
+EXAMPLE WORKFLOW
 
-Log in to Odoo in a browser tab and click the extension icon. Search for a model, load its fields and use Browse fields to select a field. Choose an operator and value, add conditions or logical groups, then review and copy your generated domain.
+Open your logged-in Odoo tab and click the extension icon. Choose purchase.order and Load fields. In Browse fields, open Order Lines, then Product, then Name to build:
 
-For example, choose sale.order and Total (amount_total), select > and enter 100. The result is:
+[('order_line.product_id.name', 'ilike', 'Chair')]
 
-[('amount_total', '>', 100.0)]
+Or select the Product relation itself, click Select record, and choose a product by name. Its actual numeric ID becomes the value. For quantity, choose order_line.product_qty.
 
-A related field can produce:
-
-[('partner_id.country_id.code', '=', 'BD')]
-
-WHO IS IT FOR?
-
-Odoo developers, technical consultants, functional consultants, implementers and teams working with Odoo filters and domain syntax. This focused Odoo development tool can preview matching records on request and does not modify business records.
+Open Review & Copy to copy the domain. Choose fields controls the result columns; Related fields adds child values. Click Load data to read matching purchase orders and display their selected columns.
 
 ACCESS AND LIMITS
 
-Model and field visibility follow your Odoo account's access rights. If your account cannot list models, enter a known technical model name directly. Related values use record IDs; record-name lookup is available from Select record. Datetimes are entered in UTC. The builder supports common literal-valued domains, not arbitrary Python expressions or every version-specific/custom operator. It does not run server-side validation.
+Your Odoo account’s permissions, field access and record rules apply. You can enter a technical model name directly if model listing is restricted. Up to 100 conditions, five logical group levels, eight relation levels and 12 preview columns are supported. Binary preview fields are excluded. Large related result sets ask you to narrow the domain.
+
+Separate conditions on a one-to-many path may match different child records. Arbitrary Python/context expressions, any/not any subdomains and universal compatibility with customized Odoo servers are not supported. Validation in the builder is local; actual matching is performed by Odoo when you request a preview.
 
 PRIVACY
 
-Temporary active-tab access and scripting are used only when you invoke the extension to read metadata and explicitly requested matching records from your selected Odoo session. No permanent website permissions, password entry, developer servers, or analytics. Load data sends the domain to your Odoo server and displays records in memory; it does not save or change them. Drafts and selected model context are stored locally. Manual mode works offline.
+Temporary activeTab access and scripting reuse your selected Odoo session. No permanent website permissions or password entry. Record selection sends search text to your Odoo server; Load data sends the domain and reads matching records. Records are never changed. Drafts and selected IDs are stored locally; result names and preview rows remain in memory. No developer-operated data service, extension analytics or advertising. Manual mode works offline.
 
-Independent tool; not affiliated with or endorsed by Odoo S.A.
+Screenshots use fictional demo metadata and records. Independent tool; not affiliated with or endorsed by Odoo S.A.
 
-## Editorial search terms
+## Suggested release note
 
-Odoo domain builder, Odoo models, Odoo fields, visual domain builder, Odoo developer tools, Odoo filters, Odoo domain syntax, Odoo development, custom fields, related fields.
+New: preview matching records with Load data, choose result columns across related models, navigate child fields, and select products or other records by name with automatic IDs. Includes paginated results and refreshed documentation.
 
-## Accuracy audit
+## Screenshot captions
 
-Model search uses paginated ir.model.search_read. Field discovery uses fields_get with no field-name restriction. The field browser searches labels/names/types and loads related-model definitions on demand. Typed inputs, local metadata validation, logical groups, copy, theme and draft features are implemented. No universal Odoo-version compatibility, arbitrary Python execution or full domain-language coverage is claimed.
-
-Store screenshots show the actual extension with controlled demo metadata, identified as such. No live customer records or fake reviews are used.
-
-
-Relational record selection: **Select record…** searches the related model by display name and inserts the selected numeric ID. For List values (including `in` / `not in`), **Select records…** inserts a JSON list of selected IDs. Searches request ID and display name from the selected Odoo server using the existing session and access rights, 50 results at a time. Search text is sent only to that server. Result names remain in memory; selected IDs are saved as part of the domain draft.
+1. Build purchase-order domains with child fields.
+2. Explore order lines and related products.
+3. Select products by name; use their IDs automatically.
+4. Choose your result columns across related models.
+5. Copy your domain and load matching records.

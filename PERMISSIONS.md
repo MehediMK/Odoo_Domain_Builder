@@ -1,26 +1,20 @@
-# Purpose and permissions — version 1.1.0
+# Purpose and permissions — version 1.2.0
 
-Single purpose: visually create and generate Odoo domain expressions, using model and field metadata from the user's selected Odoo session when connected.
+Single purpose: visually build Odoo domain filters and inspect matching records using the user’s selected Odoo session.
 
-## Permissions requested
+## Requested permissions
 
-- **activeTab:** temporary access to the tab where the user clicks the extension icon. This is used to query the selected Odoo installation's authenticated model/field metadata and, after Load data is clicked, matching records. No permanent website access is requested.
-- **scripting:** runs a packaged, self-contained function in that tab's isolated world. Its only allowed operations are session verification, model listing through ir.model.search_read fields_get metadata loading, and user-requested record previews through search_read. It does not scrape the page or write business records.
+- **activeTab:** temporary access to the Odoo tab where the user clicks the extension icon. Used for session verification, model/field metadata, user-requested record-name searches and matching-record previews.
+- **scripting:** executes the extension’s packaged read-only request function in that tab’s isolated world. Allowed operations are session verification, model listing, field metadata, record choices and previews. It does not scrape the page or write business records.
 
-Host permissions: **none**. No tabs, cookies, storage, history, webRequest or all-URLs permissions are requested. Chrome's native windows API opens/focuses the wizard without an additional permission. Local Web Storage retains drafts/preferences without chrome.storage.
+There are no permanent host, tabs, cookies, storage, history, webRequest or all-URLs permissions. Local Web Storage stores drafts/preferences without chrome.storage permission. The native windows API opens and focuses the wizard without an additional permission.
 
-The service worker accepts requests only from this extension's wizard page, verifies the source tab/origin and restricts operations to the read-only operation allowlist. Injected requests stay on that origin and reject redirects. Session/database mismatches and access errors stop metadata loading. The wizard's own CSP blocks direct network connections.
+The service worker accepts messages only from the extension’s wizard, checks the source tab/origin and allows only specific read operations. Requests remain on that origin, reject redirects and check the database session. The wizard’s CSP blocks direct network requests; all Odoo requests run in the selected tab.
 
-## Chrome Web Store disclosure guidance
+## Disclosure text for publishing
 
-- Remote code: **No**. Executable code is bundled with the extension.
-- Developer or third-party data collection: **None**. Metadata and requested record previews are read directly from the user's selected Odoo server and used locally for the requested feature.
-- Explain local data use accurately: drafts and selected origin/database/model are stored locally; temporary session information, field metadata and record previews are processed to provide model-aware input.
-- Do not reuse the old version's “no permissions”, “no network requests” or “no Odoo access” claims. Those applied only to the offline release.
-- No data sale, unrelated use, creditworthiness use, tracking or analytics.
-- Publish PRIVACY.md at a publicly reachable URL and supply that URL in the dashboard.
+All executable code is packaged; no remote code is loaded. Metadata, record search text, domain values and selected columns are sent only to the user’s chosen Odoo server using their existing session. Returned business data is used locally for requested features. No developer service receives it, no records are changed and there is no extension tracking or analytics.
 
-Reference: https://developer.chrome.com/docs/extensions/reference/api/scripting
+Draft values, selected record IDs and model/database/origin preferences are stored locally. Field catalogs, record names, result rows and selected preview columns remain in memory. The separate docs website uses GA4; the extension does not.
 
-
-Relational record selection: **Select record…** searches the related model by display name and inserts the selected numeric ID. For List values (including `in` / `not in`), **Select records…** inserts a JSON list of selected IDs. Searches request ID and display name from the selected Odoo server using the existing session and access rights, 50 results at a time. Search text is sent only to that server. Result names remain in memory; selected IDs are saved as part of the domain draft.
+Deploy `docs/privacy.html` and set the store privacy policy URL to `https://mehedimk.github.io/Odoo_Domain_Builder/privacy.html`. Do not use the original offline release’s “no permissions”, “no network requests” or “no business-record access” claims.
