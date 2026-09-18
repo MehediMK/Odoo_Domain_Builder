@@ -77,7 +77,7 @@
       {
         "@type": "Question",
         "name": "Does the extension send my generated domains to Odoo?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. Domains are generated locally on your device and copied to your clipboard. Only read-only model/field metadata requests go to your selected Odoo origin. The domain is never executed against your database." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Only when you click Load data or Load more. The domain and its values are sent to your selected Odoo server to read matching records using your account’s access rights." }
       },
       {
         "@type": "Question",
@@ -87,7 +87,7 @@
       {
         "@type": "Question",
         "name": "Does it read or change my business records?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. The extension reads session information, model names from ir.model, and field definitions through fields_get. It never reads or writes business records and never executes domains." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Load data reads matching business records on request, using your Odoo account’s access rights. Results are displayed in memory, 50 at a time. It never writes business records." }
       },
       {
         "@type": "Question",
@@ -233,7 +233,7 @@
       </div>
       <div class="hero-badges">
         <span class="badge">No account required</span>
-        <span class="badge">No business-record access</span>
+        <span class="badge">Read-only record previews</span>
         <span class="badge">Offline manual mode</span>
       </div>
       <img class="hero-shot" src="assets/screenshots/01-main-builder.png" alt="Odoo Domain Builder wizard: the Choose a Model panel next to a visual condition builder showing loaded field metadata" width="1280" height="800">
@@ -251,7 +251,7 @@
           <div>
             <p>Odoo filters — the values of <code>domain</code> attributes on actions, views, and server code — are plain Python-ish lists such as <code>[('state', '=', 'draft')]</code>. Learning the exact technical field names and operators for every model is tedious and error prone.</p>
             <p><b>Odoo Domain Builder</b> connects to your logged-in Odoo session and loads the real field metadata your account can see. You pick a model, browse its fields (searchable, along dotted relation paths), set operators and values with type-aware inputs, and get a ready-to-paste expression.</p>
-            <p>The domain is generated <b>entirely on your device</b>. The extension never executes domains, reads business records, or sends your expression anywhere.</p>
+            <p>The domain is generated <b>entirely on your device</b>. Click <b>Load data</b> on Review &amp; Copy to send the domain to your selected Odoo server and preview matching records. Records are never changed.</p>
           </div>
           <div>
             <p>Connect in seconds and produce expressions like:</p>
@@ -320,7 +320,8 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="how-heading">How it works</h2>
-          <p class="lead">Install, connect, and copy your first Odoo domain in under a minute.</p>
+          <p class="lead">Install, connect, build your domain, and copy it or preview matching records.</p>
+          <p>On Review &amp; Copy, click <b>Load data</b> to list matching records below the domain. The table shows up to 12 columns: ID, display name when available, and domain fields. Dotted paths show the top-level relation. <b>Load more</b> fetches the next 50 records. Your Odoo account’s access rights apply.</p>
         </div>
         <div class="steps">
           <div class="step-item"><p><b>Install.</b> Open <a href="https://chromewebstore.google.com/detail/homeljjcgdefldcneinofjnbdagdhbmg?utm_source=item-share-cb">Odoo Domain Builder on the Chrome Web Store</a> and click <b>Add to Chrome</b>. Chrome 116 or newer is required.</p></div>
@@ -387,7 +388,7 @@
               <li>Up to eight related-field levels in dotted paths.</li>
               <li>Datetimes are entered in <b>UTC</b>.</li>
               <li>Related fields use record IDs or JSON lists of IDs (record names are not fetched).</li>
-              <li>Expressions are <b>never executed</b>; arbitrary Python / context expressions and server operators are out of scope.</li>
+              <li>Domains are sent to Odoo only for requested record previews; arbitrary Python / context expressions and server operators are out of scope.</li>
             </ul>
           </div>
         </div>
@@ -408,14 +409,14 @@
               <li><b>scripting</b> — runs a packaged, self-contained function in that tab's isolated world for session checks and metadata loading.</li>
             </ul>
             <p><b>No</b> host permissions, cookies, tabs, browsing-history, webRequest, or storage permissions are requested. There is no remote code and no auto-injected content script.</p>
-            <p>The injected code only verifies the session, lists models through <code>ir.model</code>, and reads field definitions via <code>fields_get</code>. It does not scrape the page or read or write business records.</p>
+            <p>The injected code verifies the session, lists models through <code>ir.model</code>, reads field definitions via <code>fields_get</code>, and loads matching records through <code>search_read</code> when you click Load data. It does not scrape the page or write business records.</p>
           </div>
           <div>
             <h3>Privacy</h3>
             <ul class="tight">
               <li><b>No credentials:</b> you are never asked for a password or API key; the existing session is reused.</li>
-              <li><b>Metadata only:</b> requests go only to your selected Odoo origin and follow its normal access controls.</li>
-              <li><b>Generated domains stay local:</b> your expression and entered values are never sent to Odoo or any third party.</li>
+              <li><b>Selected server only:</b> metadata and record-preview requests go only to your selected Odoo origin and follow its normal access controls.</li>
+              <li><b>Record previews:</b> Load data sends the domain and values only to your selected Odoo server. Loaded records remain in memory and are never changed.</li>
               <li><b>Local storage:</b> drafts and preferences live in extension Web Storage and are deleted on uninstall.</li>
               <li><b>The extension has no analytics, advertising, or telemetry.</b></li>
             </ul>
@@ -455,9 +456,9 @@
           <h2 id="faq-heading">Frequently asked questions</h2>
         </div>
         <details class="faq-item"><summary>What is an Odoo domain?</summary><p>An Odoo domain is a list of conditions used to filter records, written as tuples such as <code>[('state', '=', 'draft')]</code>. Domains are the value of the <code>domain</code> attribute on actions, sidebars, computed fields, and server code.</p></details>
-        <details class="faq-item"><summary>Does the extension send my generated domains to Odoo?</summary><p>No. Expressions are generated locally and copied to your clipboard. Only read-only model/field metadata requests go to your selected Odoo origin, and the domain is never executed against your database.</p></details>
+        <details class="faq-item"><summary>Does the extension send my generated domains to Odoo?</summary><p>Only when you click Load data or Load more. The domain and its values are sent to your selected Odoo server to read matching records using your account’s access rights.</p></details>
         <details class="faq-item"><summary>Do I need to enter my Odoo password or an API key?</summary><p>No. Clicking the toolbar icon in a logged-in Odoo tab reuses that tab's existing session. The extension does not read cookie values or store credentials.</p></details>
-        <details class="faq-item"><summary>Does it read or change my business records?</summary><p>No. It reads session information, model names from <code>ir.model</code>, and field definitions through <code>fields_get</code> — nothing else. It never reads or writes business records and never executes domains.</p></details>
+        <details class="faq-item"><summary>Does it read or change my business records?</summary><p>Load data reads matching business records on request, using your Odoo account’s access rights. Results are displayed in memory, 50 at a time. It never writes business records.</p></details>
         <details class="faq-item"><summary>Can I use it without a connection to Odoo?</summary><p>Yes. Manual-field mode builds domains offline without model validation or any Odoo connection, while still validating syntax, values, and logical structure.</p></details>
         <details class="faq-item"><summary>Does it support custom models and custom fields?</summary><p>Yes. Connected mode loads every field your Odoo account can see — including custom and inherited fields — and lets you browse relations up to eight levels. Accounts that cannot list <code>ir.model</code> can still type a known technical model name.</p></details>
         <details class="faq-item"><summary>Which browsers and versions are supported?</summary><p>It is a Manifest V3 Chrome extension and requires Chrome 116 or newer.</p></details>

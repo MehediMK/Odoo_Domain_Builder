@@ -1,6 +1,6 @@
 # Privacy Policy — Odoo Domain Builder
 
-Effective date: September 17, 2026 · Version 1.1.0
+Effective date: September 18, 2026 · Version 1.1.0
 
 Odoo Domain Builder helps you visually construct domain expressions. It has no developer-operated service, telemetry, advertising, analytics or accounts.
 
@@ -10,15 +10,15 @@ When you click the extension icon in an Odoo tab, temporary tab access lets the 
 
 The extension requests session information to verify login/database context, lists model names and labels from ir.model, and reads field definitions through fields_get. Definitions can include technical names, labels, types, relations, selection choices and searchable flags. Related-field browsing loads metadata for the referenced models. Session information is handled transiently in the selected tab; only origin, database and Odoo version information is returned to the wizard.
 
-These requests go only to your selected Odoo server. Its usual access controls and logging apply. No business records are read or changed. Generated domains and entered condition values are not sent to Odoo or to the developer. The extension never executes a domain against your database.
+These requests go only to your selected Odoo server. Its usual access controls and logging apply. Only when you click Load data (or Load more), the extension sends the generated domain and its condition values to your selected Odoo server through search_read and displays matching business records. Requests follow your account’s access rights, record rules and field access. Each page displays up to 50 records, requesting one extra to check for more results. Records are never changed. No domain or record data is sent to the developer.
 
 ## Local storage
 
-The current domain draft, selected model, Odoo origin/database identifier and UI preferences are saved in local Web Storage belonging to the extension. This data is not sent to the developer or synchronized by the extension. Field catalogs are held in memory, not persistently cached. Clear all resets the current expression; context and preferences may remain until uninstalling. Removing the extension deletes its local storage.
+The current domain draft, selected model, Odoo origin/database identifier and UI preferences are saved in local Web Storage belonging to the extension. This data is not sent to the developer or synchronized by the extension. Field catalogs and loaded record previews are held in memory, not persistently cached. Preview results are cleared when the domain or model context changes and are discarded when the window closes. Clear all resets the current expression; context and preferences may remain until uninstalling. Removing the extension deletes its local storage.
 
 ## Permissions and website access
 
-activeTab grants temporary access to the tab where you explicitly invoke the extension. scripting runs packaged, read-only metadata-request code in that tab's isolated world. There are no permanent host permissions or automatically injected content scripts. The extension does not scrape page content, inspect unrelated sites, read browsing history or use a cookies permission.
+activeTab grants temporary access to the tab where you explicitly invoke the extension. scripting runs packaged, read-only metadata and record-request code in that tab's isolated world. There are no permanent host permissions or automatically injected content scripts. The extension does not scrape page content, inspect unrelated sites, read browsing history or use a cookies permission.
 
 Manual-field mode works offline without Odoo metadata requests. Choosing it cancels applying pending connection results, though an already-sent read-only request may finish.
 

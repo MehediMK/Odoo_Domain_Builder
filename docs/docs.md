@@ -31,8 +31,7 @@ The extension connects to your logged-in Odoo session and loads the real field m
 account can see. You pick a model, browse fields (searchable, along dotted relation paths), set
 operators and values with type-aware inputs, and get a ready-to-paste expression.
 
-The domain is generated entirely on your device. The extension never executes domains, reads
-business records, or sends your expression anywhere.
+The domain is generated entirely on your device. Click **Load data** on Review & Copy to send the domain to your selected Odoo server and preview matching records. Records are never changed.
 
 Examples:
 
@@ -96,7 +95,7 @@ Screenshots show the actual extension using controlled demo metadata.
    **Related fields →** to navigate a relation. Select a field, operator, and value.
 5. **Combine and review.** Add conditions or nested AND / OR / NOT groups, then choose
    **Review domain →** to validate everything and view the generated expression.
-6. **Copy.** Click **Copy Domain** to place your domain on the clipboard and paste it into Odoo.
+6. **Copy or load data.** Click **Copy Domain** to copy the expression, or **Load data** to list matching records below it. Results show ID, display name when available, and domain fields (up to 12 columns; dotted paths show the top-level relation). **Load more** fetches the next 50 records. Previews require a connected model and follow your Odoo access rights.
 
 Reconnect anytime: clicking the toolbar icon reuses the existing wizard; clicking from a different
 Odoo tab switches its connection and refreshes metadata.
@@ -134,7 +133,7 @@ Odoo tab switches its connection and refreshes metadata.
 - Up to eight related-field levels in dotted paths.
 - Datetimes are entered in **UTC**.
 - Related fields use record IDs or JSON lists of IDs (record names are not fetched).
-- Expressions are **never executed**; arbitrary Python / context expressions and server operators
+- Domains are sent to Odoo only for requested record previews; arbitrary Python / context expressions and server operators
   are out of scope.
 
 ## Security, permissions, and privacy
@@ -152,10 +151,9 @@ requested. No remote code and no auto-injected content script.
 ### Privacy
 
 - No credentials: you are never asked for a password or API key; the existing session is reused.
-- Metadata only: requests go only to your selected Odoo origin and follow its normal access
+- Selected server only: metadata and record-preview requests go only to your selected Odoo origin and follow its normal access
   controls.
-- Generated domains stay local: your expression and entered values are never sent to Odoo or any
-  third party.
+- Record previews: Load data sends the domain and values only to your selected Odoo server. Loaded records remain in memory and are never changed.
 - Local storage: drafts and preferences live in extension Web Storage and are deleted on uninstall.
 - The extension has no analytics, advertising, or telemetry.
 
@@ -189,17 +187,14 @@ An Odoo domain is a list of conditions used to filter records, written as tuples
 computed fields, and server code.
 
 **Does the extension send my generated domains to Odoo?**
-No. Expressions are generated locally and copied to your clipboard. Only read-only model/field
-metadata requests go to your selected Odoo origin, and the domain is never executed against your
-database.
+Only when you click Load data or Load more. The domain and its values are sent to your selected Odoo server to read matching records using your account’s access rights.
 
 **Do I need to enter my Odoo password or an API key?**
 No. Clicking the toolbar icon in a logged-in Odoo tab reuses that tab's existing session. The
 extension does not read cookie values or store credentials.
 
 **Does it read or change my business records?**
-No. It reads session information, model names from `ir.model`, and field definitions through
-`fields_get` — nothing else. It never reads or writes business records and never executes domains.
+Load data reads matching business records on request, using your Odoo account’s access rights. Results are displayed in memory, 50 at a time. It never writes business records.
 
 **Can I use it without a connection to Odoo?**
 Yes. Manual-field mode builds domains offline without model validation or any Odoo connection,

@@ -42,9 +42,16 @@
       <div class="section-heading"><h2 id="output-heading">Generated domain</h2><span id="validity" class="validity">Valid syntax</span></div>
       <div class="code-panel"><div class="code-label"><span>PYTHON · ODOO DOMAIN</span><button id="format" aria-pressed="false">Format</button></div><pre id="output" tabindex="0" aria-label="Generated Odoo domain"></pre></div>
       <div id="errors" aria-live="polite"></div>
-      <div class="output-actions"><p id="summary"></p><button id="copy" class="primary">Copy Domain <span aria-hidden="true">↗</span></button></div>
+      <div class="output-actions"><p id="summary"></p><div class="preview-actions"><button id="load-data" class="secondary" disabled>Load data</button><button id="copy" class="primary">Copy Domain <span aria-hidden="true">↗</span></button></div></div>
     </section>
-      <p class="review-note">The domain is generated on your device and is not sent to Odoo. Connected mode reads model and field metadata only; it does not read business records or execute this domain.</p>
+      <p id="load-data-hint" class="model-hint"></p>
+      <section id="record-preview" aria-labelledby="records-heading" hidden>
+        <h2 id="records-heading">Matching records</h2>
+        <p id="records-status" role="status" aria-live="polite"></p>
+        <div id="records-table" class="records-table" tabindex="0" role="region" aria-label="Matching records table"></div>
+        <button id="load-more-records" class="secondary" hidden>Load more</button>
+      </section>
+      <p class="review-note">Load data sends this domain to your selected Odoo server and reads matching records using your account's access rights. Records are displayed only in this window and are not saved. No records are changed.</p>
     </div>
     </div>
     <footer class="wizard-footer"><div><button id="clear" class="text-button">Clear all</button><span class="save-note">Saved on this device</span></div><div class="footer-actions"><button id="back" class="secondary" hidden>← Back</button><button id="next" class="primary">Review domain →</button><button id="done" class="secondary" hidden>Done</button></div></footer>

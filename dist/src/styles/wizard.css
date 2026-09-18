@@ -156,3 +156,16 @@ pre { font-family: ui-monospace,"DejaVu Sans Mono",monospace; font-size: 14px; l
 .model-panel-heading { flex-wrap: wrap; }
 .model-panel-heading #connection-badge { margin-left: auto; }
 #change-model { padding: 6px 10px; font-size: 11px; }
+
+.preview-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.output-actions { flex-wrap: wrap; }
+#record-preview { margin-top: 24px; }
+#records-status { color: var(--muted); font-size: 12px; }
+#records-status.error-text { color: var(--danger); }
+.records-table { overflow: auto; max-height: 400px; margin: 12px 0; border: 1px solid var(--line); border-radius: 10px; }
+.records-table:empty { display: none; }
+.records-table table { width: 100%; border-collapse: collapse; text-align: left; }
+.records-table caption { padding: 10px; text-align: left; color: var(--muted); }
+.records-table th, .records-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); min-width: 90px; max-width: 320px; overflow-wrap: anywhere; }
+.records-table th { position: sticky; top: 0; background: var(--soft); }
+.records-table tbody tr:nth-child(even) { background: var(--bg); }

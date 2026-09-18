@@ -27,11 +27,11 @@ Version 1.1.0 adds `activeTab` and `scripting` permissions because automatic mod
 
 ## Values and domain logic
 
-Selection fields provide their actual options. Booleans, integers, floats/monetary values, dates and datetimes infer an appropriate input type. Related fields use record IDs or JSON lists of IDs; business records and their names are not fetched. Datetimes are explicitly entered in **UTC**.
+Selection fields provide their actual options. Booleans, integers, floats/monetary values, dates and datetimes infer an appropriate input type. Related fields use record IDs or JSON lists of IDs; the condition editor does not fetch record names. Datetimes are explicitly entered in **UTC**.
 
 Manual value types include String, Boolean, Integer, Float, False / unset, List (JSON), Date, Date/time (UTC) and Empty string. Lists use input like `["draft", "sent"]`, `[1, 2]` or `[true, false]`; output uses Python literals.
 
-Supports the 17 operators shown in the syntax guide, AND / OR / NOT, up to 100 conditions, five nested logical group levels and eight related-field levels. Strings are escaped; expressions are never executed. An empty root is `[]`, matching all records. Empty groups and incomplete conditions block copying. Connected mode also validates known fields, searchable status, value types and selection choices.
+Supports the 17 operators shown in the syntax guide, AND / OR / NOT, up to 100 conditions, five nested logical group levels and eight related-field levels. Strings are escaped; expressions are evaluated by Odoo only when you request a record preview. An empty root is `[]`, matching all records. Empty groups and incomplete conditions block copying. Connected mode also validates known fields, searchable status, value types and selection choices.
 
 This is not an interpreter for every possible Odoo expression. Arbitrary Python/context expressions, `any`/`not any` subdomain operators, custom server operators, nested JSON objects and server execution are not implemented. Model-specific semantics and record access must still be checked in Odoo. Read-only metadata endpoints follow standard Odoo web JSON-RPC conventions; customized authentication, URL-prefix deployments or server overrides may require adaptation.
 
@@ -39,7 +39,7 @@ This is not an interpreter for every possible Odoo expression. Arbitrary Python/
 
 **Use manual fields instead** enables the original offline builder without model validation. It does not require an Odoo connection. Default startup no longer assumes a state field.
 
-Only model/field/session metadata requests go to the selected Odoo origin. Domain expressions and their values are never sent to the server. No business records are read or changed, and no developer/analytics service receives data. The current draft, model/database/origin context and preferences are stored in local extension Web Storage. Field catalogs remain in memory. Clear all resets the domain; uninstall removes stored data. See `PRIVACY.md` and `PERMISSIONS.md`.
+Model/field/session metadata requests go to the selected Odoo origin. Clicking **Load data** on Review & Copy sends the domain and condition values to that server and reads matching records. The table shows up to 12 columns: ID, display name when available, and domain fields (top-level relations for dotted paths; binary fields are omitted). **Load more** fetches another 50 records. Odoo access rights apply. No business records are changed, and no developer/analytics service receives data. The current draft, model/database/origin context and preferences are stored in local extension Web Storage. Field catalogs and record previews remain in memory; previews are cleared when the domain/model changes. Clear all resets the domain; uninstall removes stored data. See `PRIVACY.md` and `PERMISSIONS.md`.
 
 ## Build
 

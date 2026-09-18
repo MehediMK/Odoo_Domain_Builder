@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
-    "package": "npm run build && python3 scripts/package.py"
+    "package": "npm run build && python3 scripts/package.py",
+    "check:records": "node scripts/check-record-preview.mjs"
   }
 }

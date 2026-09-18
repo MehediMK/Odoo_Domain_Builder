@@ -77,7 +77,7 @@ static host and serve:
 
 - Version, permissions and privacy statements must match `manifest.json`, `PRIVACY.md`,
   `PERMISSIONS.md`, `STORE_LISTING.md`, and `PUBLISHING_CHECKLIST.md`.
-- Do not claim: server-side validation, arbitrary Python execution, business-record lookup,
+- Do not claim: server-side validation, arbitrary Python execution, business-record modification,
   universal Odoo-version compatibility, or affiliate/endorsement status with Odoo S.A.
 - Screenshots show controlled demo metadata; keep the disclaimers in the Screenshots section if
   that remains true.

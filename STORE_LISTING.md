@@ -24,6 +24,7 @@ FEATURES
 • Multiple conditions, nested AND / OR groups and NOT
 • Input, field and logical-structure validation
 • Compact or multiline output and one-click copy
+• Load data to preview matching records, with 50-row pages and Load more
 • A movable wizard with Build and Review & Copy steps
 • Local draft recovery and light/dark themes
 • Manual-field mode for offline domain construction
@@ -42,7 +43,7 @@ A related field can produce:
 
 WHO IS IT FOR?
 
-Odoo developers, technical consultants, functional consultants, implementers and teams working with Odoo filters and domain syntax. This focused Odoo development tool does not execute domains or automate business records.
+Odoo developers, technical consultants, functional consultants, implementers and teams working with Odoo filters and domain syntax. This focused Odoo development tool can preview matching records on request and does not modify business records.
 
 ACCESS AND LIMITS
 
@@ -50,7 +51,7 @@ Model and field visibility follow your Odoo account's access rights. If your acc
 
 PRIVACY
 
-Temporary active-tab access and scripting are used only when you invoke the extension to read metadata from your selected Odoo session. No permanent website permissions, password entry, developer servers, analytics or business-record access. Generated domains stay on your device until you copy them. Drafts and selected model context are stored locally. Manual mode works offline.
+Temporary active-tab access and scripting are used only when you invoke the extension to read metadata and explicitly requested matching records from your selected Odoo session. No permanent website permissions, password entry, developer servers, or analytics. Load data sends the domain to your Odoo server and displays records in memory; it does not save or change them. Drafts and selected model context are stored locally. Manual mode works offline.
 
 Independent tool; not affiliated with or endorsed by Odoo S.A.
 
@@ -60,6 +61,6 @@ Odoo domain builder, Odoo models, Odoo fields, visual domain builder, Odoo devel
 
 ## Accuracy audit
 
-Model search uses paginated ir.model.search_read. Field discovery uses fields_get with no field-name restriction. The field browser searches labels/names/types and loads related-model definitions on demand. Typed inputs, local metadata validation, logical groups, copy, theme and draft features are implemented. No universal Odoo-version compatibility, business-record lookup, arbitrary Python execution or full domain-language coverage is claimed.
+Model search uses paginated ir.model.search_read. Field discovery uses fields_get with no field-name restriction. The field browser searches labels/names/types and loads related-model definitions on demand. Typed inputs, local metadata validation, logical groups, copy, theme and draft features are implemented. No universal Odoo-version compatibility, arbitrary Python execution or full domain-language coverage is claimed.
 
 Store screenshots show the actual extension with controlled demo metadata, identified as such. No live customer records or fake reviews are used.

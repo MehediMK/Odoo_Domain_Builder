@@ -1,4 +1,4 @@
-import { OPERATORS, TYPES, MAX_DEPTH, MAX_CONDITIONS, EXAMPLES, condition, group, compile } from '../domain/domain.js';
+import { OPERATORS, TYPES, MAX_DEPTH, MAX_CONDITIONS, EXAMPLES, condition, group, compile, toRpcDomain } from '../domain/domain.js';
 import { defaultType, modelErrors } from '../domain/catalog.js';
 import { setupModels, setupFieldBrowser } from './models.js';
 import { readDraft, saveDraft, clearDraft } from '../utils/storage.js';
@@ -22,6 +22,7 @@ let formatted = stored?.formatted === true;
 let result;
 let timer;
 let storageWarning = false;
+let previewKey = '', previewToken = 0, previewLoading = false, previewRows = [], previewFields = [], previewHasMore = false;
 const typeNames = { string: 'String', boolean: 'Boolean', integer: 'Integer', float: 'Float', false: 'False / unset', list: 'List (JSON)', date: 'Date', datetime: 'Date/time (UTC)', empty: 'Empty string' };
 function el(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; }
 function announce(message) { $('#status').textContent = message; clearTimeout(timer); timer = setTimeout(() => { $('#status').textContent = ''; }, 5000); }
@@ -39,6 +40,7 @@ function update() {
   if (result.errors.length) result.code = '';
   $('#output').textContent = result.errors.length ? 'Complete the highlighted conditions to generate a domain.' : result.code;
   $('#copy').disabled = Boolean(result.errors.length);
+  syncPreview();
   $('#next').disabled = Boolean(result.errors.length);
   $('#step-review').disabled = Boolean(result.errors.length);
   $('#validity').textContent = result.errors.length ? 'Needs attention' : 'Valid syntax';
@@ -198,3 +200,64 @@ setupModels({
   },
   onManual() { currentCatalog = null; modelContext = null; modelRequired = false; document.querySelectorAll('[data-example]').forEach(item => { item.hidden = false; }); render(); }
 });
+
+function syncPreview() {
+  const key = JSON.stringify([tree, modelContext, busy, Boolean(currentCatalog), result.errors]);
+  if (key !== previewKey) {
+    previewKey = key; ++previewToken; previewLoading = false; previewRows = []; previewHasMore = false;
+    $('#record-preview').hidden = true; $('#records-table').replaceChildren(); $('#records-status').textContent = '';
+    $('#load-more-records').hidden = true;
+  }
+  $('#load-data').disabled = previewLoading || busy || !currentCatalog || !modelContext || Boolean(result.errors.length);
+  $('#load-data').textContent = previewLoading ? 'Loading…' : 'Load data';
+  $('#load-data-hint').textContent = currentCatalog ? 'Preview matching records, 50 at a time. Related conditions show the top-level relation column.' : 'Connect to Odoo and choose a model to load matching records.';
+  $('#load-more-records').disabled = previewLoading;
+}
+function renderRecords() {
+  const table = el('table');
+  const caption = el('caption', '', `${modelContext.model} · ${previewRows.length} records loaded`); table.append(caption);
+  const head = el('thead'), headings = el('tr');
+  for (const name of previewFields) { const th = el('th', '', currentCatalog.info(name)?.label || name); th.scope = 'col'; headings.append(th); }
+  head.append(headings); table.append(head);
+  const body = el('tbody');
+  for (const row of previewRows) {
+    const tr = el('tr');
+    for (const name of previewFields) {
+      const value = row[name], info = currentCatalog.info(name);
+      let text = value === null || value === undefined || value === false ? (info?.type === 'boolean' ? 'False' : '—') : String(value);
+      if (info?.type === 'selection') text = info.selection.find(([key]) => key === value)?.[1] || text;
+      if (Array.isArray(value)) text = info?.type === 'many2one' ? String(value[1] ?? value[0]) : value.join(', ');
+      else if (value && typeof value === 'object') text = JSON.stringify(value);
+      tr.append(el('td', '', text));
+    }
+    body.append(tr);
+  }
+  table.append(body); $('#records-table').replaceChildren(table);
+}
+async function loadRecords(more = false) {
+  if (previewLoading || busy || !currentCatalog || !modelContext || result.errors.length || (more && !previewHasMore)) return;
+  const token = ++previewToken;
+  previewLoading = true; syncPreview(); $('#record-preview').hidden = false;
+  $('#records-status').classList.remove('error-text'); $('#records-status').textContent = 'Loading matching records…';
+  try {
+    const domain = toRpcDomain(tree);
+    if (!more) {
+      previewRows = []; previewHasMore = false; $('#records-table').replaceChildren(); $('#load-more-records').hidden = true;
+      const fields = new Set(['id']);
+      if (currentCatalog.info('display_name')) fields.add('display_name');
+      for (const token of domain) if (Array.isArray(token)) { const name = token[0].split('.')[0]; if (currentCatalog.info(name)?.type !== 'binary') fields.add(name); }
+      previewFields = [...fields].slice(0, 12);
+    }
+    const response = await chrome.runtime.sendMessage({ type: 'odoo-metadata', operation: 'records', database: modelContext.database, model: modelContext.model, domain, fields: previewFields, offset: previewRows.length });
+    if (token !== previewToken) return;
+    if (!response?.ok) throw new Error(response?.error || 'Unable to load records. Reconnect from your Odoo tab and try again.');
+    previewRows.push(...response.data.rows); previewHasMore = response.data.hasMore;
+    if (previewRows.length) renderRecords();
+    $('#records-status').textContent = previewRows.length ? `${previewRows.length} records loaded${previewHasMore ? ' · More available' : ' · All matching records loaded'}.` : 'No records match this domain for your account.';
+    $('#load-more-records').hidden = !previewHasMore;
+  } catch (error) {
+    if (token === previewToken) { $('#records-status').textContent = error.message; $('#records-status').classList.add('error-text'); }
+  } finally { if (token === previewToken) { previewLoading = false; syncPreview(); } }
+}
+$('#load-data').addEventListener('click', () => loadRecords());
+$('#load-more-records').addEventListener('click', () => loadRecords(true));

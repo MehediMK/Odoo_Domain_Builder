@@ -99,3 +99,26 @@ export function compile(tree, formatted = false) {
   const tokens = visit(tree, [], 0, true);
   return { errors, count, code: errors.length ? '' : formatted && tokens.length ? '[\n  ' + tokens.join(',\n  ') + '\n]' : '[' + tokens.join(', ') + ']' };
 }
+
+/** Convert validated literal values directly to RPC data, never evaluate Python output. */
+export function toRpcDomain(tree) {
+  const { errors } = compile(tree);
+  if (errors.length) throw new Error(errors[0].message);
+  function visit(node, root = false) {
+    if (node.kind === 'condition') {
+      let value = node.value;
+      if (node.type === 'empty') value = '';
+      else if (node.type === 'false') value = false;
+      else if (node.type === 'boolean') value = value === 'true';
+      else if (node.type === 'list') value = JSON.parse(value);
+      else if (['integer', 'float'].includes(node.type)) {
+        value = Number(value);
+        if (node.type === 'integer' && !Number.isSafeInteger(value)) throw new Error('Load data requires integers within the safe numeric range.');
+      } else if (node.type === 'datetime') value = (value.length === 16 ? value + ':00' : value).replace('T', ' ');
+      return [[node.field.trim(), node.operator, value]];
+    }
+    const prefix = root && node.logic === 'AND' && !node.not ? [] : Array(Math.max(0, node.children.length - 1)).fill(node.logic === 'AND' ? '&' : '|');
+    return [...(node.not ? ['!'] : []), ...prefix, ...node.children.flatMap(child => visit(child))];
+  }
+  return visit(tree, true);
+}
