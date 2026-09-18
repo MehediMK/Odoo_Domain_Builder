@@ -21,3 +21,6 @@ The service worker accepts requests only from this extension's wizard page, veri
 - Publish PRIVACY.md at a publicly reachable URL and supply that URL in the dashboard.
 
 Reference: https://developer.chrome.com/docs/extensions/reference/api/scripting
+
+
+Relational record selection: **Select record…** searches the related model by display name and inserts the selected numeric ID. For List values (including `in` / `not in`), **Select records…** inserts a JSON list of selected IDs. Searches request ID and display name from the selected Odoo server using the existing session and access rights, 50 results at a time. Search text is sent only to that server. Result names remain in memory; selected IDs are saved as part of the domain draft.

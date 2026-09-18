@@ -95,7 +95,7 @@ Screenshots show the actual extension using controlled demo metadata.
    **Related fields →** to navigate a relation. Select a field, operator, and value.
 5. **Combine and review.** Add conditions or nested AND / OR / NOT groups, then choose
    **Review domain →** to validate everything and view the generated expression.
-6. **Copy or load data.** Click **Copy Domain** to copy the expression, or **Load data** to list matching records below it. Results show ID, display name when available, and domain fields (up to 12 columns; dotted paths show the top-level relation). **Load more** fetches the next 50 records. Previews require a connected model and follow your Odoo access rights.
+6. **Copy or load data.** Click **Copy Domain** to copy the expression, or **Load data** to list matching records below it. Use **Choose fields** to search and select up to 12 columns before loading data. Binary fields are excluded. Changing the selection clears the previous results. **Load more** fetches the next 50 records. Previews require a connected model and follow your Odoo access rights.
 
 Reconnect anytime: clicking the toolbar icon reuses the existing wizard; clicking from a different
 Odoo tab switches its connection and refreshes metadata.
@@ -220,3 +220,22 @@ Up to 100 conditions, five nested group levels, and eight related-field levels. 
 **Is this tool affiliated with Odoo S.A.?**
 No. Odoo Domain Builder is an independent community tool and is not affiliated with or endorsed by
 Odoo S.A.
+
+Related-model previews: in Review & Copy, expand **Choose fields** and use **Related fields →** to select columns such as `partner_id.email` or `partner_id.country_id.name`. Use **Parent model** to go back; selected columns remain visible and can be removed individually. Domains still filter the selected main model. Related record values appear in that model’s result rows; multiple related values are separated by semicolons. Up to eight relation levels and 12 columns are supported. Related reads use the same Odoo session and access rights; previews stay in memory. Large expansions (over 1,000 related IDs per branch or 5,000 across a page) request a narrower domain instead of silently truncating results.
+
+
+### Build a domain using child fields
+
+For `purchase.order`, choose **Browse fields → Order Lines (order_line)**. Select **Quantity (product_qty)**, or open **Product (product_id) → Name (name)**. Relation rows open their child model; **Use record IDs** selects the relation itself. Breadcrumbs return to any parent model. You can also type the complete dotted field path directly.
+
+Examples:
+
+```python
+[('order_line.product_id.name', 'ilike', 'Chair')]
+[('order_line.product_qty', '>', 10.0)]
+```
+
+These domains filter purchase orders. Use **Review & Copy → Choose fields → Related fields** to include child values in **Load data**. Separate conditions on a one-to-many path may match different child records; a standard AND group does not require them to match the same line.
+
+
+Relational record selection: **Select record…** searches the related model by display name and inserts the selected numeric ID. For List values (including `in` / `not in`), **Select records…** inserts a JSON list of selected IDs. Searches request ID and display name from the selected Odoo server using the existing session and access rights, 50 results at a time. Search text is sent only to that server. Result names remain in memory; selected IDs are saved as part of the domain draft.

@@ -47,7 +47,7 @@ Odoo developers, technical consultants, functional consultants, implementers and
 
 ACCESS AND LIMITS
 
-Model and field visibility follow your Odoo account's access rights. If your account cannot list models, enter a known technical model name directly. Related values use record IDs; record-name lookup is not included. Datetimes are entered in UTC. The builder supports common literal-valued domains, not arbitrary Python expressions or every version-specific/custom operator. It does not run server-side validation.
+Model and field visibility follow your Odoo account's access rights. If your account cannot list models, enter a known technical model name directly. Related values use record IDs; record-name lookup is available from Select record. Datetimes are entered in UTC. The builder supports common literal-valued domains, not arbitrary Python expressions or every version-specific/custom operator. It does not run server-side validation.
 
 PRIVACY
 
@@ -64,3 +64,6 @@ Odoo domain builder, Odoo models, Odoo fields, visual domain builder, Odoo devel
 Model search uses paginated ir.model.search_read. Field discovery uses fields_get with no field-name restriction. The field browser searches labels/names/types and loads related-model definitions on demand. Typed inputs, local metadata validation, logical groups, copy, theme and draft features are implemented. No universal Odoo-version compatibility, arbitrary Python execution or full domain-language coverage is claimed.
 
 Store screenshots show the actual extension with controlled demo metadata, identified as such. No live customer records or fake reviews are used.
+
+
+Relational record selection: **Select record…** searches the related model by display name and inserts the selected numeric ID. For List values (including `in` / `not in`), **Select records…** inserts a JSON list of selected IDs. Searches request ID and display name from the selected Odoo server using the existing session and access rights, 50 results at a time. Search text is sent only to that server. Result names remain in memory; selected IDs are saved as part of the domain draft.

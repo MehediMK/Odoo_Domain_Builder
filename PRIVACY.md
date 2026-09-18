@@ -10,7 +10,7 @@ When you click the extension icon in an Odoo tab, temporary tab access lets the 
 
 The extension requests session information to verify login/database context, lists model names and labels from ir.model, and reads field definitions through fields_get. Definitions can include technical names, labels, types, relations, selection choices and searchable flags. Related-field browsing loads metadata for the referenced models. Session information is handled transiently in the selected tab; only origin, database and Odoo version information is returned to the wizard.
 
-These requests go only to your selected Odoo server. Its usual access controls and logging apply. Only when you click Load data (or Load more), the extension sends the generated domain and its condition values to your selected Odoo server through search_read and displays matching business records. Requests follow your account’s access rights, record rules and field access. Each page displays up to 50 records, requesting one extra to check for more results. Records are never changed. No domain or record data is sent to the developer.
+These requests go only to your selected Odoo server. Its usual access controls and logging apply. When you click Load data (or Load more), the extension sends the generated domain and its condition values to your selected Odoo server through search_read and displays matching business records. Requests follow your account’s access rights, record rules and field access. Each page displays up to 50 records, requesting one extra to check for more results. Records are never changed. No domain or record data is sent to the developer.
 
 ## Local storage
 
@@ -29,3 +29,9 @@ Copy Domain writes the current expression to the clipboard only after you click 
 ## Disclosure and contact
 
 No information is sold, transferred to third-party services, used for unrelated purposes or used for lending/credit decisions. Questions can be sent through the support contact on the extension's Chrome Web Store listing. Material changes to these practices will be reflected in this policy.
+
+
+Related-model previews: in Review & Copy, expand **Choose fields** and use **Related fields →** to select columns such as `partner_id.email` or `partner_id.country_id.name`. Use **Parent model** to go back; selected columns remain visible and can be removed individually. Domains still filter the selected main model. Related record values appear in that model’s result rows; multiple related values are separated by semicolons. Up to eight relation levels and 12 columns are supported. Related reads use the same Odoo session and access rights; previews stay in memory. Large expansions (over 1,000 related IDs per branch or 5,000 across a page) request a narrower domain instead of silently truncating results.
+
+
+Relational record selection: **Select record…** searches the related model by display name and inserts the selected numeric ID. For List values (including `in` / `not in`), **Select records…** inserts a JSON list of selected IDs. Searches request ID and display name from the selected Odoo server using the existing session and access rights, 50 results at a time. Search text is sent only to that server. Result names remain in memory; selected IDs are saved as part of the domain draft.

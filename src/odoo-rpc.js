@@ -36,6 +36,15 @@ async function readOdooMetadata(request) {
       if (!Array.isArray(rows)) throw new Error('Odoo returned an invalid model list.');
       return { ok: true, data: rows.filter(row => typeof row.model === 'string' && namePattern.test(row.model)).map(row => ({ model: row.model, name: String(row.name || row.model) })) };
     }
+    if (request.operation === 'record-options') {
+      if (!request.database || typeof request.model !== 'string' || request.model.length > 128 || !namePattern.test(request.model)) throw new Error('Choose a connected related model first.');
+      if (!Number.isSafeInteger(request.offset) || request.offset < 0) throw new Error('Invalid record search offset.');
+      const query = String(request.query || '').trim().slice(0, 100);
+      const domain = query ? [['display_name', 'ilike', query]] : [];
+      const rows = await rpc('/web/dataset/call_kw', { model: request.model, method: 'search_read', args: [domain], kwargs: { fields: ['id', 'display_name'], order: 'id', offset: request.offset, limit: 51, context } });
+      if (!Array.isArray(rows) || rows.some(row => !row || !Number.isSafeInteger(row.id) || row.id <= 0)) throw new Error('Odoo returned invalid record choices.');
+      return { ok: true, data: { rows: rows.slice(0, 50).map(row => ({ id: row.id, name: String(row.display_name || row.id) })), hasMore: rows.length > 50 } };
+    }
     if (request.operation === 'records') {
       const operators = ['=', '!=', '>', '<', '>=', '<=', 'in', 'not in', 'ilike', 'not ilike', 'like', 'not like', 'child_of', 'parent_of', '=?', '=like', '=ilike'];
       const scalar = value => typeof value === 'boolean' || (typeof value === 'string' && value.length <= 10000) || (typeof value === 'number' && Number.isFinite(value) && (!Number.isInteger(value) || Number.isSafeInteger(value)));
@@ -47,11 +56,68 @@ async function readOdooMetadata(request) {
         if (Array.isArray(token)) operands++;
         else { const arity = token === '!' ? 1 : 2; if (operands < arity) throw new Error('Invalid record preview domain.'); operands -= arity - 1; }
       }
-      if (!Array.isArray(request.fields) || !request.fields.length || request.fields.length > 12 || request.fields.some(field => typeof field !== 'string' || field.length > 128 || !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(field))) throw new Error('Invalid preview fields.');
+      if (!Array.isArray(request.fields) || !request.fields.length || request.fields.length > 12 || request.fields.some(field => typeof field !== 'string' || field.length > 256 || field.split('.').length > 9 || !namePattern.test(field))) throw new Error('Invalid preview fields.');
       if (!Number.isSafeInteger(request.offset) || request.offset < 0) throw new Error('Invalid preview offset.');
-      const rows = await rpc('/web/dataset/call_kw', { model: request.model, method: 'search_read', args: [request.domain], kwargs: { fields: request.fields, order: 'id', offset: request.offset, limit: 51, context } });
+      const rows = await rpc('/web/dataset/call_kw', { model: request.model, method: 'search_read', args: [request.domain], kwargs: { fields: [...new Set(request.fields.map(field => field.split('.')[0]))], order: 'id', offset: request.offset, limit: 51, context } });
       if (!Array.isArray(rows) || rows.some(row => !row || typeof row !== 'object' || !Number.isSafeInteger(row.id))) throw new Error('Odoo returned invalid records.');
-      return { ok: true, data: { rows: rows.slice(0, 50), hasMore: rows.length > 50 } };
+      const page = rows.slice(0, 50);
+      // Resolve relation paths in batches, retaining the main model's row order.
+      const schemaCache = new Map();
+      const schema = async model => {
+        if (!schemaCache.has(model)) {
+          const fields = await rpc('/web/dataset/call_kw', { model, method: 'fields_get', args: [], kwargs: { attributes: ['type', 'relation'], context } });
+          if (!fields || typeof fields !== 'object' || Array.isArray(fields)) throw new Error('Odoo returned invalid related field metadata.');
+          schemaCache.set(model, fields);
+        }
+        return schemaCache.get(model);
+      };
+      const relationIds = (value, type) => {
+        if (type === 'many2one') return Array.isArray(value) && Number.isSafeInteger(value[0]) ? [value[0]] : [];
+        return Array.isArray(value) ? value.filter(id => Number.isSafeInteger(id) && id > 0) : [];
+      };
+      let relatedCount = 0, expandedValues = 0;
+      async function expand(model, records, paths) {
+        const groups = new Map();
+        for (const path of paths) {
+          if (!path.includes('.')) continue;
+          const [field, ...tail] = path.split('.');
+          if (!groups.has(field)) groups.set(field, new Set());
+          groups.get(field).add(tail.join('.'));
+        }
+        if (!groups.size || !records.length) return;
+        const fields = await schema(model);
+        for (const [field, tails] of groups) {
+          const info = fields[field];
+          if (!info || !['many2one', 'one2many', 'many2many'].includes(info.type) || typeof info.relation !== 'string' || !namePattern.test(info.relation)) throw new Error(`Cannot browse related field ${field}.`);
+          const ids = [...new Set(records.flatMap(record => relationIds(record[field], info.type)))];
+          relatedCount += ids.length;
+          if (ids.length > 1000 || relatedCount > 5000) throw new Error('Too many related records for this preview. Narrow your domain or select fewer related columns.');
+          let related = [];
+          if (ids.length) {
+            related = await rpc('/web/dataset/call_kw', { model: info.relation, method: 'search_read', args: [[['id', 'in', ids]]], kwargs: { fields: [...new Set([...tails].map(path => path.split('.')[0]))], limit: 1000, order: 'id', context: { ...context, active_test: false } } });
+            if (!Array.isArray(related) || related.some(record => !record || !Number.isSafeInteger(record.id))) throw new Error('Odoo returned invalid related records.');
+            await expand(info.relation, related, [...tails]);
+          }
+          const byId = new Map(related.map(record => [record.id, record]));
+          for (const record of records) {
+            for (const tail of tails) {
+              const values = [];
+              for (const id of relationIds(record[field], info.type)) {
+                const relatedRecord = byId.get(id);
+                if (!relatedRecord) continue;
+                const value = relatedRecord[tail];
+                const additions = tail.includes('.') ? value?.values || [] : [value ?? false];
+                expandedValues += additions.length;
+                if (values.length + additions.length > 1000 || expandedValues > 50000) throw new Error('Too many related values to display. Narrow your domain or select fewer related columns.');
+                values.push(...additions);
+              }
+              record[field + '.' + tail] = { values };
+            }
+          }
+        }
+      }
+      await expand(request.model, page, request.fields);
+      return { ok: true, data: { rows: page, hasMore: rows.length > 50 } };
     }
     if (request.operation === 'fields' && typeof request.model === 'string' && request.model.length <= 128 && namePattern.test(request.model)) {
       const fields = await rpc('/web/dataset/call_kw', { model: request.model, method: 'fields_get', args: [], kwargs: { attributes: ['string', 'type', 'relation', 'selection', 'searchable', 'store', 'help'], context } });

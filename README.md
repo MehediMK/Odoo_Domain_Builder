@@ -27,7 +27,7 @@ Version 1.1.0 adds `activeTab` and `scripting` permissions because automatic mod
 
 ## Values and domain logic
 
-Selection fields provide their actual options. Booleans, integers, floats/monetary values, dates and datetimes infer an appropriate input type. Related fields use record IDs or JSON lists of IDs; the condition editor does not fetch record names. Datetimes are explicitly entered in **UTC**.
+Selection fields provide their actual options. Booleans, integers, floats/monetary values, dates and datetimes infer an appropriate input type. Related fields use record IDs or JSON lists of IDs; the condition editor can search related records by name and insert their IDs. Datetimes are explicitly entered in **UTC**.
 
 Manual value types include String, Boolean, Integer, Float, False / unset, List (JSON), Date, Date/time (UTC) and Empty string. Lists use input like `["draft", "sent"]`, `[1, 2]` or `[true, false]`; output uses Python literals.
 
@@ -39,7 +39,7 @@ This is not an interpreter for every possible Odoo expression. Arbitrary Python/
 
 **Use manual fields instead** enables the original offline builder without model validation. It does not require an Odoo connection. Default startup no longer assumes a state field.
 
-Model/field/session metadata requests go to the selected Odoo origin. Clicking **Load data** on Review & Copy sends the domain and condition values to that server and reads matching records. The table shows up to 12 columns: ID, display name when available, and domain fields (top-level relations for dotted paths; binary fields are omitted). **Load more** fetches another 50 records. Odoo access rights apply. No business records are changed, and no developer/analytics service receives data. The current draft, model/database/origin context and preferences are stored in local extension Web Storage. Field catalogs and record previews remain in memory; previews are cleared when the domain/model changes. Clear all resets the domain; uninstall removes stored data. See `PRIVACY.md` and `PERMISSIONS.md`.
+Model/field/session metadata requests go to the selected Odoo origin. Clicking **Load data** on Review & Copy sends the domain and condition values to that server and reads matching records. Use **Choose fields** to search model fields and select up to 12 columns. Binary fields are omitted. Changing the selection clears the previous results; click **Load data** to fetch the selected columns. **Load more** fetches another 50 records. Odoo access rights apply. No business records are changed, and no developer/analytics service receives data. The current draft, model/database/origin context and preferences are stored in local extension Web Storage. Field catalogs and record previews remain in memory; previews are cleared when the domain/model changes. Clear all resets the domain; uninstall removes stored data. See `PRIVACY.md` and `PERMISSIONS.md`.
 
 ## Build
 
@@ -57,3 +57,23 @@ Browser verification used a controlled local Odoo-compatible metadata server. Th
 References: [Odoo fields_get](https://www.odoo.com/documentation/19.0/developer/reference/backend/orm.html), [Chrome scripting](https://developer.chrome.com/docs/extensions/reference/api/scripting), [activeTab](https://developer.chrome.com/docs/extensions/develop/concepts/activeTab).
 
 Independent tool; not affiliated with or endorsed by Odoo S.A.
+
+
+Related-model previews: in Review & Copy, expand **Choose fields** and use **Related fields →** to select columns such as `partner_id.email` or `partner_id.country_id.name`. Use **Parent model** to go back; selected columns remain visible and can be removed individually. Domains still filter the selected main model. Related record values appear in that model’s result rows; multiple related values are separated by semicolons. Up to eight relation levels and 12 columns are supported. Related reads use the same Odoo session and access rights; previews stay in memory. Large expansions (over 1,000 related IDs per branch or 5,000 across a page) request a narrower domain instead of silently truncating results.
+
+
+### Build a domain using child fields
+
+For `purchase.order`, choose **Browse fields → Order Lines (order_line)**. Select **Quantity (product_qty)**, or open **Product (product_id) → Name (name)**. Relation rows open their child model; **Use record IDs** selects the relation itself. Breadcrumbs return to any parent model. You can also type the complete dotted field path directly.
+
+Examples:
+
+```python
+[('order_line.product_id.name', 'ilike', 'Chair')]
+[('order_line.product_qty', '>', 10.0)]
+```
+
+These domains filter purchase orders. Use **Review & Copy → Choose fields → Related fields** to include child values in **Load data**. Separate conditions on a one-to-many path may match different child records; a standard AND group does not require them to match the same line.
+
+
+Relational record selection: **Select record…** searches the related model by display name and inserts the selected numeric ID. For List values (including `in` / `not in`), **Select records…** inserts a JSON list of selected IDs. Searches request ID and display name from the selected Odoo server using the existing session and access rights, 50 results at a time. Search text is sent only to that server. Result names remain in memory; selected IDs are saved as part of the domain draft.

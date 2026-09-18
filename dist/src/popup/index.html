@@ -30,6 +30,7 @@
       </div>
     </section>
     <section class="builder-section" aria-label="Visual domain builder">
+      <p class="model-hint">Build with this model’s fields or child fields: Browse fields → open a relation → choose a child field. Example: <code>order_line.product_id.name</code> or <code>order_line.product_qty</code> on purchase.order.</p>
       <div id="builder"></div>
     </section>
     <details id="examples"><summary>Examples <span>Start with a common domain</span></summary><div id="example-list" class="examples-grid"></div></details>
@@ -44,6 +45,14 @@
       <div id="errors" aria-live="polite"></div>
       <div class="output-actions"><p id="summary"></p><div class="preview-actions"><button id="load-data" class="secondary" disabled>Load data</button><button id="copy" class="primary">Copy Domain <span aria-hidden="true">↗</span></button></div></div>
     </section>
+      <details id="preview-field-picker" hidden>
+        <summary>Choose fields <span id="preview-field-count"></span></summary>
+        <p class="model-hint">Select up to 12 columns from this model or its related models, then click Load data. Binary fields are not available.</p>
+        <label class="field"><span class="field-label">Search fields by name or label</span><input id="preview-field-search" type="search" placeholder="e.g. name, email, amount_total" autocomplete="off"></label>
+        <div class="preview-path-controls"><button id="preview-field-parent" class="secondary" type="button" disabled>← Parent model</button><span id="preview-field-path" class="model-hint"></span></div>
+        <div id="preview-selected-fields" class="preview-selected-fields" aria-label="Selected columns"></div>
+        <div id="preview-field-options" class="preview-field-options"></div>
+      </details>
       <p id="load-data-hint" class="model-hint"></p>
       <section id="record-preview" aria-labelledby="records-heading" hidden>
         <h2 id="records-heading">Matching records</h2>
@@ -57,7 +66,15 @@
     <footer class="wizard-footer"><div><button id="clear" class="text-button">Clear all</button><span class="save-note">Saved on this device</span></div><div class="footer-actions"><button id="back" class="secondary" hidden>← Back</button><button id="next" class="primary">Review domain →</button><button id="done" class="secondary" hidden>Done</button></div></footer>
     <div id="status" role="status" aria-live="polite"></div>
   </main>
-  <dialog id="field-dialog" aria-labelledby="field-dialog-title"><div class="field-dialog-heading"><div><h2 id="field-dialog-title">Choose a field</h2><p id="field-path"></p></div><button id="field-close" class="icon-button" aria-label="Close field browser">×</button></div><div class="field-dialog-tools"><button id="field-parent" class="secondary">← Parent</button><label class="field"><span class="field-label">Search fields by label, name or type</span><input id="field-search" type="search" autocomplete="off"></label></div><p id="field-count"></p><div id="field-list"></div></dialog>
+  <dialog id="field-dialog" aria-labelledby="field-dialog-title"><div class="field-dialog-heading"><div><h2 id="field-dialog-title">Choose a field</h2><nav id="field-path" aria-label="Related field path"></nav></div><button id="field-close" class="icon-button" aria-label="Close field browser">×</button></div><div class="field-dialog-tools"><button id="field-parent" class="secondary">← Parent</button><label class="field"><span class="field-label">Search fields by label, name or type</span><input id="field-search" type="search" autocomplete="off"></label></div><p id="field-count"></p><div id="field-list"></div></dialog>
+  <dialog id="record-picker" aria-labelledby="record-picker-title">
+    <div class="field-dialog-heading"><div><h2 id="record-picker-title">Select record</h2><p id="record-picker-model" class="model-hint"></p></div><button id="record-picker-close" class="icon-button" aria-label="Close record picker">×</button></div>
+    <label class="field"><span class="field-label">Search records by name</span><input id="record-picker-search" type="search" autocomplete="off" maxlength="100" placeholder="Type a product or record name…"></label>
+    <p id="record-picker-status" role="status" aria-live="polite"></p>
+    <div id="record-picker-selected" class="preview-selected-fields"></div>
+    <div id="record-picker-results"></div>
+    <div class="preview-actions"><button id="record-picker-more" class="secondary" hidden>Load more</button><button id="record-picker-retry" class="secondary" hidden>Retry</button><button id="record-picker-apply" class="primary" hidden>Use selected</button></div>
+  </dialog>
   <datalist id="fields"><option value="state"></option><option value="active"></option><option value="name"></option><option value="partner_id"></option><option value="company_id"></option><option value="create_date"></option><option value="user_id"></option><option value="id"></option></datalist>
 </body>
 </html>

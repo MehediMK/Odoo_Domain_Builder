@@ -93,12 +93,21 @@ export function setupFieldBrowser() {
     const matches = Object.values(fields).filter(field => `${field.label} ${field.name} ${field.type}`.toLocaleLowerCase().includes(search)).sort((a, b) => a.label.localeCompare(b.label));
     for (const info of matches) {
       const row = textElement('div', '', 'field-choice');
-      const pick = textElement('button', '', 'field-pick'); pick.type = 'button'; pick.disabled = !info.searchable;
-      pick.append(textElement('strong', info.label), textElement('small', `${info.name} · ${info.type}${info.searchable ? '' : ' · not searchable'}`));
-      pick.addEventListener('click', () => { dialog.close(); choose(prefix + info.name, info); }); row.append(pick);
-      if (info.relation && prefix.split('.').length <= 8) {
-        const related = textElement('button', 'Related fields →', 'text-button'); related.type = 'button'; related.setAttribute('aria-label', `Browse related fields of ${info.name}`);
-        related.addEventListener('click', () => load(prefix + info.name + '.')); row.append(related);
+      const fieldPath = prefix + info.name;
+      const relational = Boolean(info.relation) && ['many2one', 'one2many', 'many2many'].includes(info.type);
+      const canBrowse = relational && prefix.split('.').length <= 8;
+      const pick = textElement('button', '', 'field-pick'); pick.type = 'button'; pick.disabled = !canBrowse && !info.searchable;
+      pick.append(textElement('strong', info.label + (canBrowse ? ' →' : '')), textElement('small', `${fieldPath} · ${info.type}${info.searchable ? '' : ' · not searchable'}`));
+      if (canBrowse) {
+        pick.append(textElement('small', `Open child fields of ${info.relation}`));
+        pick.setAttribute('aria-label', `Browse child fields of ${fieldPath}`);
+        pick.addEventListener('click', () => load(fieldPath + '.'));
+      } else pick.addEventListener('click', () => { dialog.close(); choose(fieldPath, info); });
+      row.append(pick);
+      if (relational) {
+        const ids = textElement('button', 'Use record IDs', 'text-button'); ids.type = 'button'; ids.disabled = !info.searchable;
+        ids.setAttribute('aria-label', `Use ${fieldPath} as record IDs`);
+        ids.addEventListener('click', () => { dialog.close(); choose(fieldPath, info); }); row.append(ids);
       }
       $('#field-list').append(row);
     }
@@ -111,13 +120,26 @@ export function setupFieldBrowser() {
       const parent = await catalog.parent(next);
       if (current !== token || !dialog.open) return;
       prefix = next; fields = parent.fields; $('#field-search').value = '';
-      $('#field-path').textContent = prefix ? `${catalog.model} → ${prefix.slice(0, -1)}` : catalog.model;
+      $('#field-path').replaceChildren();
+      const addCrumb = (text, target) => {
+        const crumb = textElement('button', text, 'text-button'); crumb.type = 'button';
+        crumb.addEventListener('click', () => load(target)); $('#field-path').append(crumb);
+      };
+      addCrumb(catalog.model, '');
+      const parts = prefix.split('.').filter(Boolean);
+      parts.forEach((part, index) => { $('#field-path').append(textElement('span', ' → ')); addCrumb(part, parts.slice(0, index + 1).join('.') + '.'); });
+      $('#field-dialog-title').textContent = prefix ? `Child fields · ${parent.model}` : 'Choose a field';
       $('#field-parent').disabled = !prefix; render(); $('#field-search').focus();
-    } catch (error) { if (current === token) $('#field-list').replaceChildren(textElement('p', error.message, 'error-text')); }
+    } catch (error) {
+      if (current === token && dialog.open) {
+        const home = textElement('button', 'Back to model fields', 'secondary'); home.type = 'button'; home.addEventListener('click', () => load(''));
+        $('#field-list').replaceChildren(textElement('p', error.message, 'error-text'), home);
+      }
+    }
   }
   $('#field-search').addEventListener('input', render);
   $('#field-parent').addEventListener('click', () => { const parts = prefix.split('.'); parts.splice(-2); load(parts.length ? parts.join('.') + '.' : ''); });
   $('#field-close').addEventListener('click', () => dialog.close());
   dialog.addEventListener('close', () => { ++token; returnFocus?.focus(); });
-  return (source, onChoose, trigger) => { catalog = source; choose = onChoose; returnFocus = trigger; dialog.showModal(); load(''); };
+  return (source, onChoose, trigger, initialPath = '') => { catalog = source; choose = onChoose; returnFocus = trigger; prefix = ''; fields = {}; $('#field-path').replaceChildren(); $('#field-count').textContent = ''; $('#field-parent').disabled = true; dialog.showModal(); load(initialPath); };
 }

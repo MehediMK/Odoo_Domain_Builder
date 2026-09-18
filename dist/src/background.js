@@ -38,7 +38,7 @@ chrome.runtime.onMessage.addListener((message, sender, reply) => {
     const tabId = Number(source.searchParams.get('sourceTab'));
     const origin = source.searchParams.get('origin');
     if (!source.searchParams.has('sourceTab') || !Number.isInteger(tabId) || !origin || !/^https?:\/\//.test(origin)) throw new Error('Open your logged-in Odoo tab and click the extension icon to connect.');
-    if (!['session', 'models', 'fields', 'records'].includes(message.operation)) throw new Error('Unsupported metadata request.');
+    if (!['session', 'models', 'fields', 'records', 'record-options'].includes(message.operation)) throw new Error('Unsupported metadata request.');
     const tab = await chrome.tabs.get(tabId);
     if (!tab.url || new URL(tab.url).origin !== origin) throw new Error('The source tab changed or access expired. Click the extension icon in your Odoo tab again.');
     const request = { operation: message.operation, origin, database: String(message.database || ''), model: String(message.model || ''), query: String(message.query || '').slice(0, 100), offset: message.offset, domain: message.domain, fields: message.fields };

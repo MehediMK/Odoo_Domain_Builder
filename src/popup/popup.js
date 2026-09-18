@@ -1,6 +1,7 @@
 import { OPERATORS, TYPES, MAX_DEPTH, MAX_CONDITIONS, EXAMPLES, condition, group, compile, toRpcDomain } from '../domain/domain.js';
 import { defaultType, modelErrors } from '../domain/catalog.js';
 import { setupModels, setupFieldBrowser } from './models.js';
+import { setupRecordPicker } from './record-picker.js';
 import { readDraft, saveDraft, clearDraft } from '../utils/storage.js';
 
 const $ = selector => document.querySelector(selector);
@@ -16,12 +17,15 @@ let modelContext = stored?.modelContext || null;
 let modelRequired = new URL(location.href).searchParams.has('sourceTab');
 let busy = false;
 const browseFields = setupFieldBrowser();
+const pickRecords = setupRecordPicker();
+const selectedRecordLabels = new WeakMap();
 let tree = stored?.tree?.kind === 'group' && safeTree(stored.tree) ? stored.tree : group('AND', [condition()]);
 let theme = stored?.theme === 'dark' ? 'dark' : 'light';
 let formatted = stored?.formatted === true;
 let result;
 let timer;
 let storageWarning = false;
+let selectedPreviewFields = [], previewFieldCatalog = null, previewFieldModel = '', previewFieldPrefix = '', previewBrowseToken = 0;
 let previewKey = '', previewToken = 0, previewLoading = false, previewRows = [], previewFields = [], previewHasMore = false;
 const typeNames = { string: 'String', boolean: 'Boolean', integer: 'Integer', float: 'Float', false: 'False / unset', list: 'List (JSON)', date: 'Date', datetime: 'Date/time (UTC)', empty: 'Empty string' };
 function el(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; }
@@ -81,14 +85,21 @@ function renderCondition(node, path, parent) {
   input.addEventListener('change', async () => {
     if (!currentCatalog) return;
     const chosen = input.value.trim();
-    const catalog = currentCatalog;
-    try { await catalog.parent(chosen); if (catalog === currentCatalog && node.field.trim() === chosen) useField(chosen, catalog.info(chosen)); }
+    const catalog = currentCatalog, selectedModel = currentCatalog.model;
+    try { await catalog.parent(chosen); if (catalog === currentCatalog && catalog.model === selectedModel && node.field.trim() === chosen) useField(chosen, catalog.info(chosen)); }
     catch (error) { announce(error.message); }
   });
   const fieldWrapper = field('Field', input, id, 'field');
   if (currentCatalog) {
-    const browse = button('Browse fields', 'browse-button', () => browseFields(currentCatalog, useField, browse));
+    const browse = button('Browse fields', 'browse-button', () => {
+      const parts = node.field.trim().split('.'); parts.pop();
+      browseFields(currentCatalog, useField, browse, parts.length ? parts.join('.') + '.' : '');
+    });
     fieldWrapper.append(browse);
+    if (info?.relation && ['many2one', 'one2many', 'many2many'].includes(info.type) && node.field.trim().split('.').length <= 8) {
+      const child = button('Child fields →', 'browse-button', () => browseFields(currentCatalog, useField, child, node.field.trim() + '.'), `Browse fields of ${info.relation}`);
+      fieldWrapper.append(child);
+    }
   }
   row.append(fieldWrapper); card.append(suggestions);
   const supportedOperators = info && !['char', 'text', 'html', 'selection'].includes(info.type) ? OPERATORS.filter(op => !['ilike', 'not ilike', 'like', 'not like', '=like', '=ilike'].includes(op)) : OPERATORS;
@@ -114,10 +125,35 @@ function renderCondition(node, path, parent) {
     value.placeholder = { string: 'e.g. draft', integer: 'e.g. 10', float: 'e.g. 10.5', list: '["draft", "sent"]' }[node.type] || '';
     value.addEventListener('input', () => { node.value = value.value; update(); });
   }
-  row.append(field(node.type === 'datetime' ? 'Value (UTC)' : 'Value', value, id, 'value'));
+  const valueWrapper = field(node.type === 'datetime' ? 'Value (UTC)' : 'Value', value, id, 'value');
+  if (info?.relation && ['many2one', 'one2many', 'many2many'].includes(info.type) && ['integer', 'list'].includes(node.type)) {
+    const selectedLabel = el('span', 'selected-record-label');
+    const savedLabel = selectedRecordLabels.get(node);
+    if (savedLabel?.field === node.field && savedLabel.value === node.value) selectedLabel.textContent = savedLabel.text;
+    value.addEventListener('input', () => { selectedRecordLabels.delete(node); selectedLabel.textContent = ''; });
+    const pick = button(node.type === 'list' ? 'Select records…' : 'Select record…', 'browse-button', () => {
+      const catalog = currentCatalog, context = modelContext, fieldName = node.field, valueType = node.type;
+      if (!catalog || !context || busy || catalog.info(node.field.trim())?.relation !== info.relation) return;
+      let ids = [];
+      try { ids = valueType === 'list' ? JSON.parse(node.value || '[]') : [Number(node.value)]; } catch { /* Replace invalid manual input with a selection. */ }
+      if (!Array.isArray(ids)) ids = [];
+      ids = [...new Set(ids.filter(item => Number.isSafeInteger(item) && item > 0))].slice(0, 1000);
+      pickRecords({ model: info.relation, database: context.database, label: info.label, multiple: valueType === 'list', ids, trigger: pick,
+        onChoose(records) {
+          if (catalog !== currentCatalog || context !== modelContext || node.field !== fieldName || node.type !== valueType || !parent.children.includes(node)) return;
+          node.value = valueType === 'list' ? JSON.stringify(records.map(record => record.id)) : String(records[0].id);
+          selectedRecordLabels.set(node, { field: node.field, value: node.value, text: records.map(record => record.name).join(', ') });
+          render(); document.getElementById(id + '-value')?.focus();
+        }
+      });
+    }, `Search ${info.relation} by name`);
+    valueWrapper.append(pick, selectedLabel);
+  }
+  row.append(valueWrapper);
   const remove = button('×', 'remove-button', () => { parent.children.splice(path.at(-1), 1); render(); document.getElementById('n' + path.slice(0, -1).join('-') + '-add')?.focus(); }, 'Remove condition'); remove.setAttribute('aria-label', 'Remove condition');
   row.append(remove); card.append(row);
-  if (info) card.append(el('p', 'field-description', `${info.label} · ${info.type}${info.relation ? ' → ' + info.relation + ' · enter record IDs' : ''}${info.searchable ? '' : ' · not searchable'}`));
+  if (node.field.includes('.') && currentCatalog) card.append(el('p', 'field-description', `${currentCatalog.model} → ${node.field.trim().split('.').join(' → ')}`));
+  if (info) card.append(el('p', 'field-description', `${info.label} · ${info.type}${info.relation ? ' → ' + info.relation + ' · select records by name or enter IDs' : ''}${info.searchable ? '' : ' · not searchable'}`));
   const error = el('p', 'inline-error'); error.id = id + '-error'; card.append(error);
   return card;
 }
@@ -180,7 +216,7 @@ document.addEventListener('keydown', event => { if (event.key === 'Escape' && ev
 applyTheme(); render();
 setupModels({
   savedContext: stored?.modelContext,
-  onBusy(value) { busy = value; update(); },
+  onBusy(value) { busy = value; if (value) pickRecords.close(); update(); },
   onReset() { currentCatalog = null; modelContext = null; modelRequired = true; },
   async onSelect(catalog, context, restore) {
     currentCatalog = catalog; modelContext = context; modelRequired = true;
@@ -202,32 +238,36 @@ setupModels({
 });
 
 function syncPreview() {
-  const key = JSON.stringify([tree, modelContext, busy, Boolean(currentCatalog), result.errors]);
+  syncPreviewFields();
+  const key = JSON.stringify([tree, modelContext, busy, Boolean(currentCatalog), result.errors, selectedPreviewFields]);
   if (key !== previewKey) {
     previewKey = key; ++previewToken; previewLoading = false; previewRows = []; previewHasMore = false;
     $('#record-preview').hidden = true; $('#records-table').replaceChildren(); $('#records-status').textContent = '';
     $('#load-more-records').hidden = true;
   }
-  $('#load-data').disabled = previewLoading || busy || !currentCatalog || !modelContext || Boolean(result.errors.length);
+  $('#load-data').disabled = previewLoading || busy || !currentCatalog || !modelContext || !selectedPreviewFields.length || Boolean(result.errors.length);
   $('#load-data').textContent = previewLoading ? 'Loading…' : 'Load data';
-  $('#load-data-hint').textContent = currentCatalog ? 'Preview matching records, 50 at a time. Related conditions show the top-level relation column.' : 'Connect to Odoo and choose a model to load matching records.';
+  $('#load-data-hint').textContent = currentCatalog ? (selectedPreviewFields.length ? 'Choose your columns above, then load matching records, 50 at a time.' : 'Select at least one field above to load data.') : 'Connect to Odoo and choose a model to load matching records.';
   $('#load-more-records').disabled = previewLoading;
 }
 function renderRecords() {
   const table = el('table');
   const caption = el('caption', '', `${modelContext.model} · ${previewRows.length} records loaded`); table.append(caption);
   const head = el('thead'), headings = el('tr');
-  for (const name of previewFields) { const th = el('th', '', currentCatalog.info(name)?.label || name); th.scope = 'col'; headings.append(th); }
+  for (const name of previewFields) { const th = el('th', '', name.includes('.') ? name : currentCatalog.info(name)?.label || name); th.title = name; th.scope = 'col'; headings.append(th); }
   head.append(headings); table.append(head);
   const body = el('tbody');
   for (const row of previewRows) {
     const tr = el('tr');
     for (const name of previewFields) {
       const value = row[name], info = currentCatalog.info(name);
-      let text = value === null || value === undefined || value === false ? (info?.type === 'boolean' ? 'False' : '—') : String(value);
-      if (info?.type === 'selection') text = info.selection.find(([key]) => key === value)?.[1] || text;
-      if (Array.isArray(value)) text = info?.type === 'many2one' ? String(value[1] ?? value[0]) : value.join(', ');
-      else if (value && typeof value === 'object') text = JSON.stringify(value);
+      const format = item => {
+        if (item === null || item === undefined || item === false) return info?.type === 'boolean' ? 'False' : '—';
+        if (info?.type === 'selection') return String(info.selection.find(([key]) => key === item)?.[1] ?? item);
+        if (Array.isArray(item)) return info?.type === 'many2one' ? String(item[1] ?? item[0]) : item.join(', ');
+        return typeof item === 'object' ? JSON.stringify(item) : String(item);
+      };
+      const text = name.includes('.') && Array.isArray(value?.values) ? (value.values.map(format).join('; ') || '—') : format(value);
       tr.append(el('td', '', text));
     }
     body.append(tr);
@@ -235,7 +275,7 @@ function renderRecords() {
   table.append(body); $('#records-table').replaceChildren(table);
 }
 async function loadRecords(more = false) {
-  if (previewLoading || busy || !currentCatalog || !modelContext || result.errors.length || (more && !previewHasMore)) return;
+  if (previewLoading || busy || !currentCatalog || !modelContext || !selectedPreviewFields.length || result.errors.length || (more && !previewHasMore)) return;
   const token = ++previewToken;
   previewLoading = true; syncPreview(); $('#record-preview').hidden = false;
   $('#records-status').classList.remove('error-text'); $('#records-status').textContent = 'Loading matching records…';
@@ -243,10 +283,7 @@ async function loadRecords(more = false) {
     const domain = toRpcDomain(tree);
     if (!more) {
       previewRows = []; previewHasMore = false; $('#records-table').replaceChildren(); $('#load-more-records').hidden = true;
-      const fields = new Set(['id']);
-      if (currentCatalog.info('display_name')) fields.add('display_name');
-      for (const token of domain) if (Array.isArray(token)) { const name = token[0].split('.')[0]; if (currentCatalog.info(name)?.type !== 'binary') fields.add(name); }
-      previewFields = [...fields].slice(0, 12);
+      previewFields = [...selectedPreviewFields];
     }
     const response = await chrome.runtime.sendMessage({ type: 'odoo-metadata', operation: 'records', database: modelContext.database, model: modelContext.model, domain, fields: previewFields, offset: previewRows.length });
     if (token !== previewToken) return;
@@ -261,3 +298,94 @@ async function loadRecords(more = false) {
 }
 $('#load-data').addEventListener('click', () => loadRecords());
 $('#load-more-records').addEventListener('click', () => loadRecords(true));
+
+function syncPreviewFields() {
+  $('#preview-field-picker').hidden = !currentCatalog || busy;
+  if (previewFieldCatalog === currentCatalog && previewFieldModel === (currentCatalog?.model || '')) return;
+  previewFieldCatalog = currentCatalog;
+  previewFieldModel = currentCatalog?.model || '';
+  previewFieldPrefix = ''; ++previewBrowseToken;
+  selectedPreviewFields = [];
+  $('#preview-field-search').value = '';
+  if (currentCatalog) {
+    const fields = new Set(['id']);
+    if (currentCatalog.info('display_name')) fields.add('display_name');
+    const visit = node => {
+      if (node.kind === 'group') return node.children.forEach(visit);
+      const name = node.field.trim().split('.')[0];
+      const info = currentCatalog.info(name);
+      if (info && info.type !== 'binary') fields.add(name);
+    };
+    visit(tree);
+    selectedPreviewFields = [...fields].slice(0, 12);
+  }
+  renderPreviewFields();
+}
+function renderSelectedPreviewFields() {
+  $('#preview-field-count').textContent = `${selectedPreviewFields.length} / 12 selected`;
+  const selected = $('#preview-selected-fields'); selected.replaceChildren();
+  for (const name of selectedPreviewFields) {
+    const remove = button(`${name} ×`, 'secondary', () => {
+      selectedPreviewFields = selectedPreviewFields.filter(field => field !== name);
+      syncPreview(); renderPreviewFields();
+    }, `Remove ${name}`);
+    remove.setAttribute('aria-label', `Remove ${name}`); selected.append(remove);
+  }
+}
+function previewParentModel() {
+  if (!previewFieldPrefix) return currentCatalog?.model;
+  return currentCatalog?.info(previewFieldPrefix.slice(0, -1))?.relation;
+}
+function renderPreviewFields() {
+  const container = $('#preview-field-options'); container.replaceChildren();
+  renderSelectedPreviewFields();
+  $('#preview-field-parent').disabled = !previewFieldPrefix;
+  $('#preview-field-path').textContent = currentCatalog ? `${currentCatalog.model}${previewFieldPrefix ? ' → ' + previewFieldPrefix.slice(0, -1) : ''}` : '';
+  if (!currentCatalog) return;
+  const fields = { id: { name: 'id', label: 'ID', type: 'integer' }, ...currentCatalog.cache.get(previewParentModel()) };
+  const query = $('#preview-field-search').value.trim().toLocaleLowerCase();
+  const matches = Object.values(fields).filter(info => info.type !== 'binary' && `${info.label} ${info.name}`.toLocaleLowerCase().includes(query)).sort((a, b) => a.label.localeCompare(b.label));
+  for (const info of matches) {
+    const path = previewFieldPrefix + info.name;
+    const row = el('div', 'preview-field-row');
+    const label = el('label', 'preview-field-option'), input = el('input');
+    input.type = 'checkbox'; input.value = path;
+    input.checked = selectedPreviewFields.includes(path);
+    input.disabled = !input.checked && selectedPreviewFields.length >= 12;
+    input.addEventListener('change', () => {
+      if (input.checked) { if (selectedPreviewFields.length < 12) selectedPreviewFields.push(path); }
+      else selectedPreviewFields = selectedPreviewFields.filter(name => name !== path);
+      syncPreview(); renderSelectedPreviewFields();
+      container.querySelectorAll('input').forEach(checkbox => {
+        checkbox.checked = selectedPreviewFields.includes(checkbox.value);
+        checkbox.disabled = !checkbox.checked && selectedPreviewFields.length >= 12;
+      });
+    });
+    const text = el('span'); text.append(el('strong', '', info.label), el('small', '', path));
+    label.append(input, text); row.append(label);
+    if (info.relation && ['many2one', 'one2many', 'many2many'].includes(info.type) && path.split('.').length <= 8) {
+      row.append(button('Related fields →', 'text-button', () => browsePreviewFields(path + '.'), `Browse ${info.relation}`));
+    }
+    container.append(row);
+  }
+  if (!matches.length) container.append(el('p', 'model-hint', 'No fields match your search.'));
+}
+async function browsePreviewFields(prefix) {
+  const catalog = currentCatalog, model = catalog?.model, token = ++previewBrowseToken;
+  if (!catalog) return;
+  $('#preview-field-options').replaceChildren(el('p', 'model-hint', 'Loading related fields…'));
+  try {
+    await catalog.parent(prefix);
+    if (token !== previewBrowseToken || currentCatalog !== catalog || catalog.model !== model) return;
+    previewFieldPrefix = prefix; $('#preview-field-search').value = ''; renderPreviewFields();
+  } catch (error) {
+    if (token === previewBrowseToken) {
+      renderPreviewFields(); $('#preview-field-options').prepend(el('p', 'error-text', error.message));
+    }
+  }
+}
+$('#preview-field-parent').addEventListener('click', () => {
+  const parts = previewFieldPrefix.split('.'); parts.splice(-2);
+  browsePreviewFields(parts.length ? parts.join('.') + '.' : '');
+});
+$('#preview-field-search').addEventListener('input', () => { ++previewBrowseToken; renderPreviewFields(); });
