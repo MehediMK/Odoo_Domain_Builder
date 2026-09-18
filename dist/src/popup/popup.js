@@ -1,5 +1,5 @@
 import { OPERATORS, TYPES, MAX_DEPTH, MAX_CONDITIONS, EXAMPLES, condition, group, compile, toRpcDomain } from '../domain/domain.js';
-import { defaultType, modelErrors } from '../domain/catalog.js';
+import { defaultType, modelErrors, MODEL_NAME } from '../domain/catalog.js';
 import { setupModels, setupFieldBrowser } from './models.js';
 import { setupRecordPicker } from './record-picker.js';
 import { readDraft, saveDraft, clearDraft } from '../utils/storage.js';
@@ -250,15 +250,38 @@ function syncPreview() {
   $('#load-data-hint').textContent = currentCatalog ? (selectedPreviewFields.length ? 'Choose your columns above, then load matching records, 50 at a time.' : 'Select at least one field above to load data.') : 'Connect to Odoo and choose a model to load matching records.';
   $('#load-more-records').disabled = previewLoading;
 }
+function recordFormUrl(recordId) {
+  if (!Number.isSafeInteger(recordId) || recordId <= 0 || !MODEL_NAME.test(modelContext?.model || '')) return '';
+  try {
+    const sourceOrigin = new URL(location.href).searchParams.get('origin');
+    const origin = new URL(modelContext.origin);
+    if (!['http:', 'https:'].includes(origin.protocol) || origin.origin !== sourceOrigin) return '';
+    const url = new URL('/web', origin.origin);
+    if (modelContext.database) url.searchParams.set('db', modelContext.database);
+    url.hash = new URLSearchParams({ id: String(recordId), model: modelContext.model, view_type: 'form' }).toString();
+    return url.href;
+  } catch { return ''; }
+}
 function renderRecords() {
   const table = el('table');
   const caption = el('caption', '', `${modelContext.model} · ${previewRows.length} records loaded`); table.append(caption);
   const head = el('thead'), headings = el('tr');
+  const openHeading = el('th', '', 'Open'); openHeading.scope = 'col'; headings.append(openHeading);
   for (const name of previewFields) { const th = el('th', '', name.includes('.') ? name : currentCatalog.info(name)?.label || name); th.title = name; th.scope = 'col'; headings.append(th); }
   head.append(headings); table.append(head);
   const body = el('tbody');
   for (const row of previewRows) {
     const tr = el('tr');
+    const action = el('td', 'record-open-cell');
+    const href = recordFormUrl(row.id);
+    if (href) {
+      const link = el('a', 'record-open-link', 'Open in Odoo ↗');
+      link.href = href; link.target = '_blank'; link.rel = 'noopener noreferrer';
+      link.title = `Open ${modelContext.model} #${row.id} in a new tab`;
+      link.setAttribute('aria-label', link.title);
+      action.append(link);
+    } else action.textContent = 'Unavailable';
+    tr.append(action);
     for (const name of previewFields) {
       const value = row[name], info = currentCatalog.info(name);
       const format = item => {

@@ -32,6 +32,8 @@ Domains filter the selected main model. Separate conditions on a one-to-many pat
 
 ## Record previews
 
+Each row includes **Open in Odoo**, which opens that main-model record’s form view in a new tab on the same Odoo server and database. It works even when ID is not a selected column. Odoo’s usual login and access rights apply.
+
 **Choose fields** searches root-model columns. Use **Related fields →** to browse child-model columns and **Parent model** to return. Selected columns remain visible as removable chips. The table can show paths such as `order_line.product_id.name` alongside the purchase order reference and vendor.
 
 Previews display 50 main-model rows per page, ordered by ID. Multiple related values appear separated by semicolons. Related columns display accessible related records, not just the child records that satisfied the domain. Binary columns are excluded. Changing the domain, model or selected columns clears the previous preview. Column selections and preview results are held in memory, not saved between sessions.

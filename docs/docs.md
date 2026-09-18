@@ -37,6 +37,8 @@ The IDs above are illustrative. Use the record picker to select products from yo
 
 ## Preview columns
 
+Click **Open in Odoo** in any matching-record row to open that record’s form view in a new tab, using the same server and database. You do not need to include ID as a visible column.
+
 Search and select main-model fields or browse related fields. Removable chips show your selection. Related values appear beside each main-model row; multiple values are separated by semicolons. Related previews show accessible child records, not only the children that matched a condition. Binary fields are excluded. Column choices and result rows remain in memory.
 
 Large expansions stop with an explanation: at most 1,000 related IDs per branch, 5,000 across a page, 1,000 values per cell and 50,000 expanded values across the request. Narrow the domain or choose fewer related columns if necessary.

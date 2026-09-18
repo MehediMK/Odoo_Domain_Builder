@@ -196,3 +196,8 @@ pre { font-family: ui-monospace,"DejaVu Sans Mono",monospace; font-size: 14px; l
 .record-option:hover { background: var(--soft); }
 .record-option input { width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--accent); }
 .selected-record-label { font-size: 11px; color: var(--green); overflow-wrap: anywhere; }
+
+.record-open-cell { white-space: nowrap; }
+.record-open-link { color: var(--accent); font-weight: 600; text-decoration: none; }
+.record-open-link:hover { text-decoration: underline; }
+.record-open-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
