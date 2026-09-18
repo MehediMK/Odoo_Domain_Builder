@@ -52,8 +52,8 @@ Everything below lives at the top of `index.html` and in `robots.txt`/`sitemap.x
    - Both JSON-LD blocks (all `screenshot` URLs)
 2. **Publish the images** — the page references relative paths
    (`assets/screenshots/*.png`, `assets/icons/*.png`). Upload the whole `docs/` folder verbatim.
-3. **Add your real store/DM link** as the primary CTA once the extension is on the Chrome Web
-   Store (the hero buttons currently point to sections of this page).
+3. **Verify the Chrome Web Store link** in the primary install CTA and installation instructions.
+   Both now link to the published extension listing.
 4. Update the **`sitemap.xml`** last-modified date and any extra pages you add.
 
 ## 4. Build-time SEO (crawlers)
@@ -70,8 +70,8 @@ static host and serve:
 
 - Screenshots are 1280×800 PNGs (~100–120 KB each) — fine for a docs page; JPEG/WebP could trim
   more if bytes are a concern.
-- No external fonts, scripts, or analytics are loaded — the page is fully self-contained and
-  fast, which also avoids CLS from late-loading third parties.
+- No external fonts are loaded. The page loads the Google Analytics 4 tag asynchronously
+  with measurement ID `G-1Q7M8BLE4C` to measure documentation website usage.
 
 ## 5. Feature-work accountability (facts to keep accurate)
 

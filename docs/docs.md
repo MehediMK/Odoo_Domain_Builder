@@ -85,8 +85,8 @@ Screenshots show the actual extension using controlled demo metadata.
 
 ## How it works
 
-1. **Install.** Open `chrome://extensions`, enable Developer mode, and load the `dist/` folder as an
-   unpacked extension. Chrome 116 or newer is required.
+1. **Install.** Open [Odoo Domain Builder on the Chrome Web Store](https://chromewebstore.google.com/detail/homeljjcgdefldcneinofjnbdagdhbmg?utm_source=item-share-cb)
+   and click **Add to Chrome**. Chrome 116 or newer is required.
 2. **Log in and click.** Open your Odoo backend in a regular tab and log in normally. Click the
    extension toolbar icon while that Odoo tab is active to grant temporary access.
 3. **Choose a model.** Search by label or technical name (for example `sale.order`,
@@ -157,7 +157,9 @@ requested. No remote code and no auto-injected content script.
 - Generated domains stay local: your expression and entered values are never sent to Odoo or any
   third party.
 - Local storage: drafts and preferences live in extension Web Storage and are deleted on uninstall.
-- No analytics, advertising, or telemetry.
+- The extension has no analytics, advertising, or telemetry.
+
+The documentation website uses Google Analytics 4 to measure website usage.
 
 Odoo access rights are respected — visible models and fields match what your account can see.
 See the repository's `PRIVACY.md` and `PERMISSIONS.md` for the full policies.

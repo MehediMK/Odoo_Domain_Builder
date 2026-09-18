@@ -2,6 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Q7M8BLE4C"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-1Q7M8BLE4C');
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Odoo Domain Builder — Visual Odoo Domain &amp; Filter Builder for Chrome</title>
 
@@ -219,7 +228,7 @@
       <h1>Build Odoo domains visually, from your real models and fields</h1>
       <p class="lead">Choose an Odoo model, browse its actual fields — including custom models, custom fields, and related fields — combine conditions with AND / OR / NOT, and copy clean, validated Odoo domain syntax with one click.</p>
       <div class="hero-cta">
-        <a class="cta cta-primary" href="#how-it-works">See how it works</a>
+        <a class="cta cta-primary" href="https://chromewebstore.google.com/detail/homeljjcgdefldcneinofjnbdagdhbmg?utm_source=item-share-cb">Install Chrome Extension</a>
         <a class="cta cta-secondary" href="#security">Privacy &amp; permissions</a>
       </div>
       <div class="hero-badges">
@@ -314,7 +323,7 @@
           <p class="lead">Install, connect, and copy your first Odoo domain in under a minute.</p>
         </div>
         <div class="steps">
-          <div class="step-item"><p><b>Install.</b> Open <code>chrome://extensions</code>, enable Developer mode, and load the <code>dist/</code> folder as an unpacked extension. Chrome 116 or newer is required.</p></div>
+          <div class="step-item"><p><b>Install.</b> Open <a href="https://chromewebstore.google.com/detail/homeljjcgdefldcneinofjnbdagdhbmg?utm_source=item-share-cb">Odoo Domain Builder on the Chrome Web Store</a> and click <b>Add to Chrome</b>. Chrome 116 or newer is required.</p></div>
           <div class="step-item"><p><b>Log in and click.</b> Open your Odoo backend in a regular tab and log in normally. Click the extension toolbar icon <i>while that Odoo tab is active</i> to grant temporary access.</p></div>
           <div class="step-item"><p><b>Choose a model.</b> Search by label or technical name (for example <code>sale.order</code>, <code>res.partner</code>, <code>project.task</code>, or a custom model). Select a suggestion or type a technical name and click <b>Load fields</b>.</p></div>
           <div class="step-item"><p><b>Build conditions.</b> Click <b>Browse fields</b>, search all fields returned by Odoo, or choose <b>Related fields →</b> to navigate a relation. Select a field, operator, and value.</p></div>
@@ -408,8 +417,9 @@
               <li><b>Metadata only:</b> requests go only to your selected Odoo origin and follow its normal access controls.</li>
               <li><b>Generated domains stay local:</b> your expression and entered values are never sent to Odoo or any third party.</li>
               <li><b>Local storage:</b> drafts and preferences live in extension Web Storage and are deleted on uninstall.</li>
-              <li><b>No analytics, advertising, or telemetry.</b></li>
+              <li><b>The extension has no analytics, advertising, or telemetry.</b></li>
             </ul>
+            <p>This documentation website uses Google Analytics 4 to measure website usage.</p>
             <p>Odoo access rights are respected — visible models and fields match what your account can see; non-searchable fields and restricted accounts are handled gracefully.</p>
             <p>See the project's <code>PRIVACY.md</code> and <code>PERMISSIONS.md</code> for the full policies.</p>
           </div>
